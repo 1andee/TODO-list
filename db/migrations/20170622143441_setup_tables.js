@@ -5,7 +5,7 @@ exports.up = function(knex, Promise) {
       table.dropColumn('name');
       table.string('email');
       table.string('password');
-      table.timestamps();
+      table.timestamp('created_at').defaultTo(knex.fn.now());
     }),
 
     knex.schema.createTable('items', table => {
@@ -15,7 +15,7 @@ exports.up = function(knex, Promise) {
       table.boolean('completed');
       table.integer('rank');
       table.string('category');
-      table.timestamps();
+      table.timestamp('created_at').defaultTo(knex.fn.now());
     })
 
   ])

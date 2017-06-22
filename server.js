@@ -43,6 +43,45 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
+//register
+app.post("/register", (req, res) => {
+  // Conditional checks for email
+  // if (req.bodyParser.email.length <= 5) {
+  //     res.status(400).send("Error 400: Please provide a valid email.");
+  // };
+  // Conditional checks for password
+  // if (!password) {
+  //   res.status(400).send("Error 400: Please provide a password.");
+  // };
+
+  // Send registration info to Users database
+  // req.session.user_id = req.params.email;
+
+
+  knex('users').insert( { email: req.body.email, password: req.body.password } )
+  .then(() => {
+    res.redirect("/");
+  });
+
+});
+
+//login
+app.post("/login", (req, res) => {
+  req.session.user_id = req.params.email;
+  res.redirect("/");
+});
+
+//logout
+app.post("/logout", (req, res) => {
+  req.session = null;
+  res.redirect("/");
+});
+
+//TO-DO list
+app.get("/list", (req, res) => {
+  res.render('hi');
+});
+
 app.listen(PORT, () => {
   console.log("Example app listening on port " + PORT);
 });
