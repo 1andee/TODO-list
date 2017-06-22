@@ -7,15 +7,15 @@ const bodyParser = require("body-parser");
 
 module.exports = (knex) => {
 
-  router.get("/", (req, res) => {
+  // make items table availabe at /list
+  router.get("/list", (req, res) => {
     knex
       .select("*")
-      .from("users")
+      .from("items")
       .then((results) => {
         res.json(results);
     });
   });
-
 
   return router;
 }
