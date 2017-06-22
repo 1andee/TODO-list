@@ -66,21 +66,20 @@ app.post("/register", (req, res) => {
   // req.session.user_id = req.params.email;
   knex('users').insert( { email: req.body.email, password: req.body.password } )
   .then(() => {
-    res.redirect("/lists");
+    res.redirect("/list");
   });
 
 });
 
 //login
 app.post("/login", (req, res) => {
-  //res.redirect("/lists");
   knex.select().table('users')
   .then((result)=> {
     for (let user of result) {
 
       if (req.body.email === user.email ) {
         if (req.body.password === user.password) {
-          res.redirect('/lists');
+          res.redirect('/list');
         } else {
           res.status(403).send("Password doesn't match");
           return;
@@ -100,6 +99,9 @@ app.post("/logout", (req, res) => {
 app.get("/list", (req, res) => {
   res.render('list');
 });
+
+//new end point
+  // request to yelp --> yelp to json
 
 app.listen(PORT, () => {
   console.log("Example app listening on port " + PORT);
