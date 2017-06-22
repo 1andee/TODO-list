@@ -1,26 +1,17 @@
 $(() => {
 
-  // $.ajax({
-  //   method: "GET",
-  //   url: "/api/users"
-  // }).done((users) => {
-  //   for(user of users) {
-  //     $("<div>").text(user.name).appendTo($("body"));
-  //   }
-  // });
-
+  // render items name at /list
   $.ajax({
     method: "GET",
     url: "/api/users/list"
   }).done((items) => {
     for(item of items) {
-      $("<div>").text(item.item_name).appendTo($("body"));
+      $("<div>").text(`Name: ${item.item_name}`).appendTo($("body"));
+      $("<div>").text(`Catergory: ${item.category}`).appendTo($("body"));
     }
   });;
 
   //hard coded headers
-
-
   $("#search_bar .input-field").keypress(function(e) {
     if(e.which == 13) {
       e.preventDefault();
