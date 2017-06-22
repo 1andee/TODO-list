@@ -7,11 +7,28 @@
     <link rel="stylesheet" href="/vendor/border-box.css" type="text/css" />
     <link rel="stylesheet" href="/styles/layout.css" type="text/css" />
 
+    <!-- materialize CDN  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css", type="text/css" />
     <script type="text/javascript" src="/vendor/jquery-3.0.0.js"></script>
     <script type="text/javascript" src="/scripts/app.js"></script>
   </head>
 
   <body>
-    <h1>Hello World!</h1>
+    <!-- materlialize container -->
+    <div class="container">
+      <!-- header -->
+      <header>
+        <h1>KICK LIST</h1>
+        <h4>save it for later</h4>
+      </header>
+
+      <!-- login / register form -->
+      <form class='col m12'>
+        <input type="text" name="email" value="email">
+        <input type="password" name="password" value="password">
+        <input type="submit" value="login">
+        <input type="submit" value="register">
+      </form>
+    </div>
   </body>
 </html>
