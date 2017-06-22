@@ -1,15 +1,18 @@
 $(() => {
 
+  // render items name at /list
   $.ajax({
     method: "GET",
-    url: "/api/users"
-  }).done((users) => {
-    for(user of users) {
-      $("<div>").text(user.name).appendTo($("body"));
+    url: "/api/users/list"
+  }).done((items) => {
+    for(item of items) {
+      $("<div>").text(`Name: ${item.item_name}`).appendTo($("body"));
+      $("<div>").text(`Catergory: ${item.category}`).appendTo($("body"));
     }
-  });
+  });;
 
   //hard coded headers
+
 
   var categories = {'www.yelp.com' : 'Restaurant',
                     'www.amazon.com' : 'Product',
@@ -49,6 +52,7 @@ $(() => {
 
         }
       });
+
 
   }});
 
