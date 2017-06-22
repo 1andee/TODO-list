@@ -1,5 +1,7 @@
 $(() => {
 
+  $('.dropdown-button').dropdown();
+
   $.ajax({
     method: "GET",
     url: "/api/users"
