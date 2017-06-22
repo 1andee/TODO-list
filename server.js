@@ -82,6 +82,9 @@ app.get("/list", (req, res) => {
   res.render("list.ejs");
 });
 
+//new end point
+  // request to yelp --> yelp to json
+
 app.listen(PORT, () => {
   console.log("Example app listening on port " + PORT);
 });
