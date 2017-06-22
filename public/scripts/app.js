@@ -1,5 +1,7 @@
 $(() => {
 
+  $('.dropdown-button').dropdown();
+
   // render items name at /list
   $.ajax({
     method: "GET",
