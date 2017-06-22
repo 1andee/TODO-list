@@ -11,27 +11,45 @@ $(() => {
 
   //hard coded headers
 
+  var categories = {'www.yelp.com' : 'Restaurant',
+                    'www.amazon.com' : 'Product',
+                    'www.imdb.com' : 'Movie'};
 
-  $("#search_bar .input-field").keypress(function(e) {
+  var list = [];
+
+  $("#search_bar .input-field").keypress( (e) => {
     if(e.which == 13) {
       e.preventDefault();
-        // GET ajax request to api
-        $.ajax({
-          //  url: 'https://api.yelp.com/v3/businesses/search?latitude=43.676667&longitude=-79.630555&term=wilbur%20mexicana&limit=1&sort_by=best_match',
-          //  url: "https://www.googleapis.com/customsearch/v1?key=AIzaSyApGojK0WLIJ2gQHRhK_Em7QJxOfVNBqFk&cx=002945784373727008043:4ivjf5lejok&q=the%20federal&gl=ca",
-          url: "http://api.wolframalpha.com/v2/query?input=the%20avengers&appid=4XV6G6-79TXE2U2HL&output=json",
-           method: 'GET',
-          //  beforeSend: function(xhr, settings) {
-          //    xhr.setRequestHeader('Authorization', 'Bearer ' + 'RMhKtmSkPfHThcXv5ve2wzGyGXeET8fnFdbQlK90d4O1N1G4cVS-JPX4yg0JV5X-zBK4NoiDXbO8OLvqI3qKkxuAquKu9CskANsoQ7otY6gZ1y4R6L0XuwJW_ONKWXYx');
-          //  },
+      //GET ajax request to api
+      $.ajax({
+        url: "https://www.googleapis.com/customsearch/v1?key=AIzaSyApGojK0WLIJ2gQHRhK_Em7QJxOfVNBqFk&cx=002945784373727008043:4ivjf5lejok&q=Avengers",
+        method: 'GET',
+        success: (response) => {
 
-           success: (response) => {
-             console.log(response);
-           }
+          for (let item of response.items) {
 
-        });
-     }
-  });
+            if (item.displayLink in categories){
 
+              let title = item.title;
+              // console.log(item.displayLink);
+              // console.log(categories['www.imdb.com']);
+              let category = categories[item.displayLink.toString()];
 
-});
+              list.push({title : category})
+
+            }
+
+          }
+
+          console.log(list);
+          for (let item of list) {
+
+            console.log(item);
+          }
+
+        }
+      });
+
+  }});
+
+})
