@@ -48,7 +48,7 @@ app.post("/register", (req, res) => {
 
   // Conditional checks for email and password
   if (!req.body.email || !req.body.password) {
-  res.status(404).send('Please fill out all fields');
+  res.status(403).send('Please fill out all fields');
   return;
   }
 
@@ -56,7 +56,7 @@ app.post("/register", (req, res) => {
   .then((result)=> {
     for (let user of result) {
       if (req.body.email === user.email ) {
-        res.status(404).send('Email already exists');
+        res.status(403).send('Email already exists');
         return;
       }
     }
@@ -73,6 +73,12 @@ app.post("/register", (req, res) => {
 
 //login
 app.post("/login", (req, res) => {
+
+  if (!req.body.email || !req.body.password) {
+  res.status(403).send('Please fill out all fields');
+  return;
+  }
+
   knex.select().table('users')
   .then((result)=> {
     for (let user of result) {
@@ -81,7 +87,7 @@ app.post("/login", (req, res) => {
         if (req.body.password === user.password) {
           res.redirect('/list');
         } else {
-          res.status(403).send("Password doesn't match");
+          res.status(401).send("Password doesn't match");
           return;
         }
       }
