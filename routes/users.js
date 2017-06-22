@@ -16,6 +16,15 @@ module.exports = (knex) => {
     });
   });
 
+  //show all rows in items
+  router.get("/list", (req, res) => {
+    knex
+      .select("*")
+      .from("items")
+      .then((results) => {
+        res.json(results);
+    });
+  });
 
   return router;
 }
