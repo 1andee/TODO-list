@@ -79,7 +79,7 @@ app.post("/logout", (req, res) => {
 
 //TO-DO list
 app.get("/list", (req, res) => {
-  res.render('hi');
+  res.render("list.ejs");
 });
 
 app.listen(PORT, () => {
