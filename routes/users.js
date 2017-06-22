@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router  = express.Router();
+const bodyParser = require("body-parser");
 
 module.exports = (knex) => {
 
@@ -12,6 +13,31 @@ module.exports = (knex) => {
       .then((results) => {
         res.json(results);
     });
+  });
+
+  //home
+  router.get("/", (req, res) => {
+
+  });
+
+  //register
+  router.get("/register", (req, res) => {
+
+  });
+
+  //login
+  router.get("/login", (req, res) => {
+
+  });
+
+  //logout
+  router.post("/logout", (req, res) => {
+
+  });
+
+  //TO-DO list
+  router.get("/list", (req, res) => {
+
   });
 
   return router;
