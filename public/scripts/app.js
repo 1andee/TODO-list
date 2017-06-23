@@ -81,7 +81,8 @@ $(() => {
 
 
   const categories = {
-    'www.yelp.com': 'Restaurant',
+
+    'www.yelp.com': 'Place',
     'www.amazon.com': 'Product',
     'www.imdb.com': 'Movie/TVSeries'
   };
@@ -95,7 +96,7 @@ $(() => {
       e.preventDefault();
       $.ajax({
 
-         url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyBR4nzihyvI2zdbX3EnNWOnMahJhve3OU8&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
+         url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyBj7ISo5BYStqj48hzKmY3vXGNQn2EVqVc&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
          method: 'GET',
       }).done((response) => {
 
@@ -147,6 +148,11 @@ $(() => {
       } else if ('movie' in item.pagemap) {
 
         return item.pagemap.movie[0].name;
+
+
+      } else {
+
+        return item.title;
 
       }
 
