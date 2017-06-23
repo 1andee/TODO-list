@@ -63,7 +63,6 @@ app.post("/register", (req, res) => {
   })
 
   // Send registration info to Users database
-  // req.session.user_id = req.params.email;
   knex('users').insert( { email: req.body.email, password: req.body.password } )
   .then(() => {
     res.redirect("/list");

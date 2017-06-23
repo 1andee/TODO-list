@@ -1,20 +1,82 @@
 $(() => {
 
-  $('.dropdown-button').dropdown();
+  // $('.dropdown-button').dropdown();
 
   // render items name at /list
   $.ajax({
     method: "GET",
-    url: "/api/users/list"
+    url: "/api/users/list",
+    dataType: "json"
   }).done((items) => {
-    for(item of items) {
-      $("<div>").text(`Name: ${item.item_name}`).appendTo($("body"));
-      $("<div>").text(`Catergory: ${item.category}`).appendTo($("body"));
+
+    $('#todo-list').empty();
+
+    // console.log(items);
+
+    // console.log($('#dropRank option:selected').text());
+
+    items = sortBy(items, "rank");
+
+    items.forEach( function(element) {
+
+      if (filterBy(element, "movie", false)) {
+
+        let item = createListElement(element);
+
+        $('#todo-list').append(item);
+
+      }
+    })
+  });
+
+
+  function sortBy(items, sortCategory) {
+
+    items.sort(function(a,b){
+
+      return a[sortCategory] - b[sortCategory]
+
+    })
+
+    return items;
+
+  }
+
+
+  function filterBy(element, category, completed) {
+
+    if ( (element.category === category) && (element.completed === completed) ) {
+
+      return element;
+
     }
-  });;
+
+    return null;
+
+  }
+
+
+  function createListElement(item) {
+
+  let item_entry = `<article>
+
+                        <p>
+                          ${item.item_name}, ${item.category}, ${item.rank}, ${item.completed}
+                        </p>
+
+                    </article>`
+
+  return item_entry;
+
+}
+
+
+
+
+
+
 
   //hard coded headers
-
 
   var categories = {'www.yelp.com' : 'Restaurant',
                     'www.amazon.com' : 'Product',
@@ -27,7 +89,7 @@ $(() => {
       e.preventDefault();
       //GET ajax request to api
       $.ajax({
-        url: "https://www.googleapis.com/customsearch/v1?key=AIzaSyApGojK0WLIJ2gQHRhK_Em7QJxOfVNBqFk&cx=002945784373727008043:4ivjf5lejok&q=Avengers",
+        url: "https://www.googleapis.com/customsearch/v1?key=AIzaSyBR4nzihyvI2zdbX3EnNWOnMahJhve3OU8&cx=002945784373727008043:4ivjf5lejok&q=Avengers",
         method: 'GET',
         success: (response) => {
 
