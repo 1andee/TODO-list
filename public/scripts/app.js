@@ -11,11 +11,11 @@ $(() => {
 
     $('#todo-list').empty();
 
-    console.log(items);
+    // console.log(items);
 
-    console.log($('#dropRank option:selected'));
+    // console.log($('#dropRank option:selected'));
 
-    items = sortBy(items, "rank");
+    // items = sortBy(items, "rank");
 
     items.forEach( function(element) {
 
@@ -30,17 +30,17 @@ $(() => {
   });
 
 
-  function sortBy(items, sortCategory) {
+  // function sortBy(items, sortCategory) {
 
-    items.sort(function(a,b){
+  //   items.sort(function(a,b){
 
-      return a[sortCategory] - b[sortCategory]
+  //     return a[sortCategory] - b[sortCategory]
 
-    })
+  //   })
 
-    return items;
+  //   return items;
 
-  }
+  // }
 
 
   function filterBy(element, category, completed) {
@@ -80,14 +80,14 @@ $(() => {
   //hard coded headers
 
 
-  var categories = {
-    'www.yelp.com': 'restaurant',
-    'www.amazon.com': 'product',
-    'www.imdb.com': 'movie'
+  const categories = {
+    'www.yelp.com': 'Place',
+    'www.amazon.com': 'Product',
+    'www.imdb.com': 'Movie/TVSeries'
   };
 
 
-  var list = [];
+  // var list = [];
 
   //to do: get search bar to replace the parameter search in the url
   $( "#search_bar .input-field" ).keypress(function (e) {
@@ -95,50 +95,69 @@ $(() => {
       e.preventDefault();
       $.ajax({
 
-         url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyBR4nzihyvI2zdbX3EnNWOnMahJhve3OU8&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
+         url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyBj7ISo5BYStqj48hzKmY3vXGNQn2EVqVc&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
          method: 'GET',
       }).done((response) => {
-          console.log(response);
+
+          // console.log(response.items);
 
           for (let item of response.items) {
 
             if (item.displayLink in categories) {
 
-              let title = item.title;
-              console.log(item.displayLink);
-              console.log(categories['www.imdb.com']);
+              // let title = item.title;
+              // console.log(item.displayLink);
+              // console.log(categories['www.imdb.com']);
               let category = categories[item.displayLink.toString()];
 
-              list.push({category})
+              let title = cleanTitle(item, category);
+
+              // list.push({category})
+              $("<div>")
+              .text(`${title} ${category}`)
+              .appendTo($(".search_results"));
 
             }
           }
 
-          //add top 10 to seach_results div
-          for (let r = 0; r < 5; r++) {
-
-              if (response.items[r].displayLink === "www.imdb.com") {
-                $("<div>")
-                .text(`${response.items[r].title.substring(0, response.items[r].title.indexOf(")"))} movie`)
-                .appendTo($(".search_results"));
-              } else if (response.items[r].displayLink === "www.yelp.com") {
-                $("<div>")
-                .text(`${response.items[r].title} place`)
-                //.substring(0, response.items[r].title.indexOf("-"))
-                .appendTo($(".search_results"));
-              } else {
-                $("<div>")
-                .text(`${response.items[r].title} product`)
-                //.substring(11, response.items[r].title.indexOf("("))
-                .appendTo($(".search_results"));
-              }
-
-
-          }
-
         });
+    }
+
+  })
+
+  function cleanTitle(item, category) {
+
+    console.log(item);
+    console.log(category);
+
+    if (category === 'Restaurant') {
+
+      return item.pagemap.localbusiness[0].name;
+
+    } else if (category === 'Product') {
+
+      return item.pagemap.metatags[0]["og:title"];
+
+    } else if (category === 'Movie/TVSeries') {
+      //debugger;
+      if ('tvseries' in item.pagemap) {
+
+        return item.pagemap.tvseries[0].name;
+
+      } else if ('movie' in item.pagemap) {
+
+        return item.pagemap.movie[0].name;
+
+      } else {
+
+        return item.title;
 
       }
-    })
 
-  });
+    }
+
+  }
+
+
+
+});
