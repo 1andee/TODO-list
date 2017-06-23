@@ -97,7 +97,9 @@ app.post("/logout", (req, res) => {
 
 //TO-DO list
 app.get("/list", (req, res) => {
-  res.render('list');
+  console.log(req.body.search);
+  let url = `https://www.googleapis.com/customsearch/v1?key=AIzaSyApGojK0WLIJ2gQHRhK_Em7QJxOfVNBqFk&cx=002945784373727008043:4ivjf5lejok&q=${req.body.search}&gl=ca`
+  res.render('list', url);
 });
 
 //new end point
