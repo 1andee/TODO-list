@@ -19,7 +19,7 @@ $(() => {
 
     items.forEach( function(element) {
 
-    if (filterBy(element, "movie", false)) {
+    if (filterBy(element, "Movies/TVSeries", false)) {
 
       let item = createListElement(element);
 
@@ -91,7 +91,6 @@ $(() => {
          url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyBj7ISo5BYStqj48hzKmY3vXGNQn2EVqVc&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
          method: 'GET',
       }).done((response) => {
-
           // console.log(response.items);
 
           for (let item of response.items) {
@@ -104,10 +103,13 @@ $(() => {
               let category = categories[item.displayLink.toString()];
 
               let title = cleanTitle(item, category);
+              let link = item.link;
+
 
               // list.push({category})
-              $("<div>")
+              $("<div>").addClass("result")
               .text(`${title} ${category}`)
+              .data("element", {"title": title, "category": category, "link": link})
               .appendTo($(".search_results"));
 
             }
@@ -150,5 +152,44 @@ $(() => {
     }
 
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$('.search_results').on('click', '.result', function () {
+
+  knex('items').insert({ //insert clicked item into items database
+    item_name: $(this).data("element").title,
+    completed: 'true',
+    rank: '5',
+    category: $(this).data("element").category
+  })
+
+
+  console.log($(this).data("element").category);
+
+});
+
+
+
+
+
+
+
+
 
 });
