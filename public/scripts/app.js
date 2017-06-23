@@ -24,10 +24,12 @@ $(() => {
         $.ajax({
            url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyApGojK0WLIJ2gQHRhK_Em7QJxOfVNBqFk&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
            method: 'GET',
-           success: (response) => {
-             console.log(response);
-           }
-        });
+        }).done((response) => {
+          console.log(response);
+          for (let r = 0; r < response.items.length; r++) {
+              $("<div>").text(`Name: ${response.items[r].title}`).appendTo($(".search_results"));
+          }
+        });;
      }
   });
 
