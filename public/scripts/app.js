@@ -131,7 +131,7 @@ $(() => {
     console.log(item);
     console.log(category);
 
-    if (category === 'Restaurant') {
+    if (category === 'Place') {
 
       return item.pagemap.localbusiness[0].name;
 
@@ -149,7 +149,6 @@ $(() => {
 
         return item.pagemap.movie[0].name;
 
-
       } else {
 
         return item.title;
@@ -159,7 +158,5 @@ $(() => {
     }
 
   }
-
-
 
 });
