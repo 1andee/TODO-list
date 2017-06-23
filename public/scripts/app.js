@@ -13,9 +13,6 @@ $(() => {
     }
   });;
 
-  // let search_param = `the%20federal`;
-  let search_param = `the%20federal`;
-  //hard coded headers
   //to do: get search bar to replace the parameter search in the url
   $("#search_bar .input-field").keypress(function(e) {
     if(e.which == 13) {
@@ -27,7 +24,9 @@ $(() => {
         }).done((response) => {
           console.log(response);
           for (let r = 0; r < response.items.length; r++) {
-              $("<div>").text(`Name: ${response.items[r].title}`).appendTo($(".search_results"));
+              $("<div>")
+              .text(`${response.items[r].title.substring(0, response.items[r].title.indexOf("-"))}`)
+              .appendTo($(".search_results"));
           }
         });;
      }
