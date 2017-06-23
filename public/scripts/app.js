@@ -11,9 +11,9 @@ $(() => {
 
     $('#todo-list').empty();
 
-    // console.log(items);
+    console.log(items);
 
-    // console.log($('#dropRank option:selected').text());
+    console.log($('#dropRank option:selected'));
 
     items = sortBy(items, "rank");
 
@@ -112,6 +112,7 @@ $(() => {
           for (let item of list) {
 
             console.log(item);
+
           }
 
         }
