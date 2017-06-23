@@ -10,7 +10,6 @@ exports.seed = function(knex, Promise) {
         knex('items').insert({user_id: '1', item_name: 'Airbud', completed: 'false', rank: '3', category: 'movie'}),
         knex('items').insert({user_id: '1', item_name: 'Wilbur Mexicana', completed: 'false', rank: '4', category: 'Restaurant'}),
         knex('items').insert({user_id: '1', item_name: 'Avengers', completed: 'true', rank: '5', category: 'movie'}),
-
       ]);
     });
 };

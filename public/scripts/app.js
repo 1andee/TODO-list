@@ -1,7 +1,5 @@
 $(() => {
 
-  // $('.dropdown-button').dropdown();
-
   // render items name at /list
   $.ajax({
     method: "GET",
@@ -15,27 +13,25 @@ $(() => {
 
     console.log($('#dropRank option:selected'));
 
-    items = sortBy(items, "rank");
+    items = sortBy(items, ); //change depending on what drop down window says
 
     items.forEach( function(element) {
 
-      if (filterBy(element, "movie", false)) {
+    if (filterBy(element, "movie", false)) {
 
-        let item = createListElement(element);
+      let item = createListElement(element);
 
-        $('#todo-list').append(item);
+      $('#todo-list').append(item);
 
-      }
-    })
-  });
+    }
+  })
+});
 
 
   function sortBy(items, sortCategory) {
 
     items.sort(function(a,b){
-
       return a[sortCategory] - b[sortCategory]
-
     })
 
     return items;
@@ -46,14 +42,10 @@ $(() => {
   function filterBy(element, category, completed) {
 
     if ( (element.category === category) && (element.completed === completed) ) {
-
       return element;
-
     }
 
-
     return null;
-
   }
 
 
@@ -70,12 +62,6 @@ $(() => {
   return item_entry;
 
   }
-
-
-
-
-
-
 
   //hard coded headers
 
