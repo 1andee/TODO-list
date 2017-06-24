@@ -82,7 +82,7 @@ app.post("/login", (req, res) => {
   .then((result)=> {
     for (let user of result) {
 
-      if (req.body.email === user.email ) {
+      if (req.body.email === user.egmail ) {
         if (req.body.password === user.password) {
           res.redirect('/list');
         } else {
@@ -137,16 +137,16 @@ app.post("/list", (req, res) => {
 
 // route for deleting items
 app.post("/list/delete", (req, res) => {
-  console.log(req.body)
+  let item_id = req.body.item_id;
 
   // knex command to remove selected item
-  /*
   knex('items')
+    .where('id', item_id)
     .del()
     .then(() => {
     res.redirect('/list');
   });
-  */
+
 
 });
 

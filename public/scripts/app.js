@@ -62,7 +62,8 @@ $(() => {
   let item_entry = `<article>
 
                         <p>
-                          ${item.item_name}, ${item.category}, ${item.rank}, ${item.completed} <a class="waves-effect waves-teal btn-flat delete">Delete</a>
+                          ${item.item_name}, ${item.category}, ${item.rank}, ${item.completed}
+                          <a id="${item.id}" class="waves-effect waves-teal btn-flat delete">Delete</a>
                         </p>
 
                     </article>`
@@ -97,7 +98,7 @@ $(() => {
          url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyDbnXGNplJSpB8gYMBr49NTbHFXPGnXgW0&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
          method: 'GET',
       }).done((response) => {
-          console.log(response.items);
+          //console.log(response.items);
 
           for (let item of response.items) {
 
@@ -118,7 +119,7 @@ $(() => {
               let description = info.description;
               let subcategory = info.subcategory;
 
-              console.log(info);
+              //console.log(info);
 
               if (title && image && description && subcategory) {
 
@@ -311,22 +312,14 @@ $('.search_results').on('click', '.result', function (e) {
 
   // DELETE ITEM FROM ITEMS TABLE WHEN DELETE BUTTON IS CLICKED
   $('.list_class').on('click', '.delete', function () {
-    /* EXPERIMENTAL JQUERY CODE BLOCK -- TO BE REMOVED
-    // .data("element", {"title": title, "category": category, "link": link})
-    // let item = $(this).data("element");
-    // let item = "purple monkey dishwasher";   returns { 'purple monkey dishwasher': '' }
-    // let item_description = $(this).parent().innerhtml;
-    // let selected_item = $(this).closest("p");
-    // let item = {"item": selected_item};
-    */
 
-    let item = "purple monkey dishwasher";
+    let item_id = {'item_id': $(this).attr('id')};
 
     // ajax post request to delete item
     $.ajax({
       method: 'POST',
       url: '/list/delete',
-      data: item
+      data: item_id
     }).then(() => {
       // render everything in items table
       $.ajax({
