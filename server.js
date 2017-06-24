@@ -134,6 +134,21 @@ app.post("/list", (req, res) => {
 
 });
 
+=======
+// route for deleting items
+app.post("/list/delete", (req, res) => {
+  console.log(req.body)
+
+  // knex command to remove selected item
+  /*
+  knex('items')
+    .del()
+    .then(() => {
+    res.redirect('/list');
+  });
+  */
+
+});
 
 app.listen(PORT, () => {
   console.log("Kick List app listening on port " + PORT);

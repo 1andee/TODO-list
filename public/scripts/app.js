@@ -62,7 +62,7 @@ $(() => {
   let item_entry = `<article>
 
                         <p>
-                          ${item.item_name}, ${item.category}, ${item.rank}, ${item.completed}
+                          ${item.item_name}, ${item.category}, ${item.rank}, ${item.completed} <a class="waves-effect waves-teal btn-flat delete">Delete</a>
                         </p>
 
                     </article>`
@@ -307,6 +307,42 @@ $('.search_results').on('click', '.result', function (e) {
     });
   });
 });
+
+
+  // DELETE ITEM FROM ITEMS TABLE WHEN DELETE BUTTON IS CLICKED
+  $('.list_class').on('click', '.delete', function () {
+    /* EXPERIMENTAL JQUERY CODE BLOCK -- TO BE REMOVED
+    // .data("element", {"title": title, "category": category, "link": link})
+    // let item = $(this).data("element");
+    // let item = "purple monkey dishwasher";   returns { 'purple monkey dishwasher': '' }
+    // let item_description = $(this).parent().innerhtml;
+    // let selected_item = $(this).closest("p");
+    // let item = {"item": selected_item};
+    */
+
+    let item = "purple monkey dishwasher";
+
+    // ajax post request to delete item
+    $.ajax({
+      method: 'POST',
+      url: '/list/delete',
+      data: item
+    }).then(() => {
+      // render everything in items table
+      $.ajax({
+        method: "GET",
+        url: "/api/users/list",
+        dataType: "json"
+      })
+      .done((items) => {
+        $('#todo-list').empty();
+        items.forEach( function(element) {
+        let item = createListElement(element);
+        $('#todo-list').append(item);
+          });
+        });
+      });
+    });
 
 
 
