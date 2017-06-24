@@ -76,14 +76,12 @@ $(() => {
 
   const categories = {
 
-    'www.yelp.com': 'Place',
-    'www.amazon.com': 'Product',
+    'www.yelp.com': 'Place/Restaurant',
+    'www.amazon.com': 'Product/Book',
     'www.imdb.com': 'Movie/TVSeries'
 
   };
 
-
-  var list = [];
 
   //to do: get search bar to replace the parameter search in the url
   $( "#search_bar .input-field" ).keypress(function (e) {
@@ -103,21 +101,25 @@ $(() => {
               // let title = item.title;
               // console.log(item.displayLink);
               // console.log(categories['www.imdb.com']);
+
+
               let category = categories[item.displayLink.toString()];
-              let info = cleanInfo(item, category);
               let link = item.link;
+
+              let info = cleanInfo(item, category);
 
               let title = info.title;
               let image = info.image;
               let description = info.description;
+              let subcategory = info.subcategory;
 
               console.log(info);
 
-              if (title && image && description) {
+              if (title && image && description && subcategory) {
 
                 $("<div>").addClass("result")
-                .text(`${title} ${category} ${description.substring(0,100)}`)
-                .data("element", {"title": title, "category": category, "link": link})
+                .text(`${title} --- ${subcategory} --- ${description.substring(0,100)}...`)
+                .data("element", {"category": subcategory, "link": link, "title": title, "image": image,"description": description})
                 .appendTo($(".search_results"));
 
               }
@@ -136,13 +138,13 @@ $(() => {
     // console.log(item);
     // console.log(category);
 
-    if (category === 'Place') {
+    if (category === 'Place/Restaurant') {
 
       // return title = item.pagemap.localbusiness[0].name;
 
       return searchYelp(item);
 
-    } else if (category === 'Product') {
+    } else if (category === 'Product/Book') {
 
       return searchAmazon(item);
 
@@ -162,6 +164,7 @@ $(() => {
     let title = null;
     let image = null;
     let description = null;
+    let subcategory = null;
 
     if ('localbusiness' in path) {
       title = item.pagemap.localbusiness[0].name;
@@ -172,11 +175,20 @@ $(() => {
     }
 
     if ('review' in path) {
-      description = item.pagemap.review[1].description;
+      if (path.review.length >= 2) {
+        description = item.pagemap.review[1].description;
+      }
     }
 
-    return {title: title, image: image, description, description};
+    if ('breadcrumb' in path) {
 
+      subcategory = path.breadcrumb[0].title;
+
+    }
+
+
+
+    return {title: title, image: image, description, description, subcategory};
   }
 
 
@@ -187,10 +199,23 @@ $(() => {
     let title = null;
     let image = null;
     let description = null;
+    let subcategory = null;
 
     if ('metatags' in path) {
       title = item.pagemap.metatags[0]["og:title"];
       description = item.pagemap.metatags[0]["og:description"];
+
+      let string = item.pagemap.metatags[0].title;
+
+      if (string) {
+
+        if (string.substring(string.length-5) === 'Books') {
+          subcategory = 'Books'
+        } else {
+          subcategory = 'Product'
+        }
+
+      }
     }
 
     if ('cse_thumbnail' in path) {
@@ -201,8 +226,7 @@ $(() => {
       description = item.pagemap.review[1].description;
     }
 
-    return {title: title, image: image, description, description};
-
+    return {title: title, image: image, description, description, subcategory};
   }
 
 
@@ -213,22 +237,25 @@ $(() => {
     let title = null;
     let image = null;
     let description = null;
+    let subcategory = null;
 
     if ('movie' in path) {
       title = item.pagemap.movie[0].name;
       description = item.pagemap.movie[0].description;
+      subcategory = 'Movie';
     }
 
     if ('tvseries' in path) {
       title = item.pagemap.tvseries[0].name;
       description = item.pagemap.tvseries[0].description;
+      subcategory = 'TVSeries';
     }
 
     if ('cse_thumbnail' in path) {
       image = item.pagemap.cse_thumbnail[0].src;
     }
 
-    return {title: title, image: image, description, description};
+    return {title: title, image: image, description, description, subcategory};
 
   }
 

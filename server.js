@@ -106,17 +106,25 @@ app.get("/list", (req, res) => {
 });
 
 app.post("/list", (req, res) => {
-  let category = req.body.category;
+
   let title = req.body.title;
-  let link = req.body.link;
-  console.log(category + title + link);
+  let category = req.body.category;
+  let description = req.body.description;
+  let thumbnail = req.body.image;
+  let url = req.body.link;
+
+  console.log(title + category + description + thumbnail + url);
 
   knex('items').insert({ //insert clicked item into items database
     user_id: '1', //change this for cookieSession
     item_name: title,
     completed: 'false',
     rank: '2',
-    category: category
+    category: category,
+    description: description,
+    thumbnail: thumbnail,
+    url: url
+
   }).then(() => {
     res.redirect('/list');
   });
