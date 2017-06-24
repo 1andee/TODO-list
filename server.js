@@ -82,7 +82,7 @@ app.post("/login", (req, res) => {
   .then((result)=> {
     for (let user of result) {
 
-      if (req.body.email === user.egmail ) {
+      if (req.body.email === user.email ) {
         if (req.body.password === user.password) {
           res.redirect('/list');
         } else {
@@ -94,11 +94,16 @@ app.post("/login", (req, res) => {
   })
 });
 
-//logout
-app.post("/logout", (req, res) => {
+// UPDATE USER PROFILE
+app.get("/profile", (req, res) => {
+  let email = "sensei_doug@gmail.com"
 
-  res.redirect("/");
+  let templateVars = {
+    email
+  };
+  res.render('profile', templateVars);
 });
+
 
 //TO-DO list
 app.get("/list", (req, res) => {
