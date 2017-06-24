@@ -107,15 +107,12 @@ app.get("/list", (req, res) => {
 
 app.post("/list", (req, res) => {
 
-
   let title = req.body.title;
   let category = req.body.category;
   let description = req.body.description;
   let thumbnail = req.body.image;
   let url = req.body.link;
   let subcategory = req.body.subcategory;
-
-  // console.log(title + category + description + thumbnail + url + subcategory);
 
   knex('items').insert({ //insert clicked item into items database
     user_id: '1', //change this for cookieSession
@@ -149,6 +146,10 @@ app.post("/list/delete", (req, res) => {
 
 
 });
+
+// app.post("/list/completed_boolean", (req, res) => {
+//   let completed_boolean = req.body.
+// });
 
 app.listen(PORT, () => {
   console.log("Kick List app listening on port " + PORT);

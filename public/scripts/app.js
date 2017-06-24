@@ -59,7 +59,7 @@ $(() => {
 
   function createListElement(item) {
 
-  let item_entry = `<article class="row">
+  let item_entry = `<article class="row item_article" id="${item.id}">
                         <h3 class="col s12">${item.item_name}</h3>
 
                           <div class="col s4">
@@ -82,7 +82,7 @@ $(() => {
                               <span class="waves-effect waves-light btn completed_boolean">
                                 ${item.completed}
                               </span>
-                              <a id="${item.id}" class="waves-effect waves-light btn delete">Delete</a>
+                              <a class="waves-effect waves-light btn delete">Delete</a>
                             </div>
                           </div>
                     </article>`
@@ -286,8 +286,9 @@ $(() => {
 
 
 
-
-
+$('.list_class').on('click', '.completed_boolean', function () {
+  $(this).closest(".item_article").prop('id')
+});
 
 
 
@@ -332,7 +333,7 @@ $('.search_results').on('click', '.result', function (e) {
   // DELETE ITEM FROM ITEMS TABLE WHEN DELETE BUTTON IS CLICKED
   $('.list_class').on('click', '.delete', function () {
 
-    let item_id = {'item_id': $(this).attr('id')};
+    let item_id = {'item_id': $(this).closest(".item_article").prop('id')};
 
     // ajax post request to delete item
     $.ajax({
