@@ -1,0 +1,24 @@
+<%- include('partials/_header') %>
+
+    <!-- update user profile -->
+    <center><h4>update your deets</h4></center>
+    <form method="POST" action="/update" class='col m12 center-align'>
+
+      <div class="row">
+        <div class="input-field col s12">
+          <input class="validate" type="text" name="email" placeholder="<%= email %>">
+          <label for="email">Email</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input class="validate" type="password" name="password" placeholder="********">
+          <label for="password">Password</label>
+        </div>
+      </div>
+      <input class="btn waves-effect waves-light" type="submit" value="update">
+
+    </form>
+  </div>
+</body>
+</html>
