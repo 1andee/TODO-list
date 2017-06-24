@@ -86,6 +86,7 @@ $(() => {
   $( "#search_bar .input-field" ).keypress(function (e) {
     if(e.which == 13) {
       e.preventDefault();
+      $('.search_results').empty();
       $.ajax({
 
          url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyBj7ISo5BYStqj48hzKmY3vXGNQn2EVqVc&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
