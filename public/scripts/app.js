@@ -1,8 +1,5 @@
 $(() => {
 
-  // var dropCategory = $('#dropCategory option:selected').text();
-
-
   // render items name at /list
   $.ajax({
     method: "GET",
@@ -22,7 +19,7 @@ $(() => {
 
     items.forEach( function(element) {
 
-    // if (filterBy(element, dropCategory, false)) {
+    // if (filterBy(element, "Movies/TVSeries", false)) {
 
       let item = createListElement(element);
 
@@ -47,6 +44,7 @@ $(() => {
   //   return items;
 
   // }
+
 
 
   function filterBy(element, category, completed) {
@@ -88,14 +86,18 @@ $(() => {
   //to do: get search bar to replace the parameter search in the url
   $( "#search_bar .input-field" ).keypress(function (e) {
     if(e.which == 13) {
+
       e.preventDefault();
+
+
+
       $('.search_results').empty();
       $.ajax({
 
          url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyDbnXGNplJSpB8gYMBr49NTbHFXPGnXgW0&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
          method: 'GET',
       }).done((response) => {
-          // console.log(response.items);
+          console.log(response.items);
 
           for (let item of response.items) {
 
@@ -116,15 +118,15 @@ $(() => {
               let description = info.description;
               let subcategory = info.subcategory;
 
-              // console.log(info);
+              console.log(info);
 
               if (title && image && description && subcategory) {
 
-                $("<div>").addClass("result")
-                .text(`${title} --- ${category} --- ${description.substring(0,50)}...`)
-                .data("element", {"category": category, "link": link, "title": title, "image": image,"description": description, "subcategory": subcategory,})
+                $("<div style='display: none;'>").addClass("result")
+                .text(`${title} --- ${subcategory} --- ${description.substring(0,100)}...`)
+                .data("element", {"category": subcategory, "link": link, "title": title, "image": image,"description": description})
                 .appendTo($(".search_results"));
-
+                $('div.result').slideDown('slow');
               }
             }
           }
@@ -189,6 +191,8 @@ $(() => {
 
     }
 
+
+
     return {title: title, image: image, description, description, subcategory};
   }
 
@@ -249,7 +253,7 @@ $(() => {
     if ('tvseries' in path) {
       title = item.pagemap.tvseries[0].name;
       description = item.pagemap.tvseries[0].description;
-      subcategory = 'TV Series';
+      subcategory = 'TVSeries';
     }
 
     if ('cse_thumbnail' in path) {
@@ -257,33 +261,52 @@ $(() => {
     }
 
     return {title: title, image: image, description, description, subcategory};
+
   }
 
 
-  $('.search_results').on('click', '.result', function () {
-    let item = $(this).data("element");
-    $('.search_results').empty();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$('.search_results').on('click', '.result', function (e) {
+  let item = $(this).data("element");
+
+
+  $('.search_results').empty();
+  $.ajax({
+    method: 'POST',
+    url: '/list',
+    data: item
+  }).then(() => {
 
     $.ajax({
-      method: 'POST',
-      url: '/list',
-      data: item
-    }).then(() => {
-
-      $.ajax({
-        method: "GET",
-        url: "/api/users/list",
-        dataType: "json"
-      })
-      .done((items) => {
-        $('#todo-list').empty();
-        items.forEach( function(element) {
-        let item = createListElement(element);
-        $('#todo-list').append(item);
-        });
+      method: "GET",
+      url: "/api/users/list",
+      dataType: "json"
+    })
+    .done((items) => {
+      $('#todo-list').empty();
+      items.forEach( function(element) {
+      let item = createListElement(element);
+      $('#todo-list').append(item);
       });
     });
   });
+});
 
 
 

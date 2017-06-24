@@ -2,10 +2,23 @@
 
     <!-- login / register form -->
     <form method="POST" action="/login" class='col m12 center-align'>
-      <input type="text" name="email" placeholder="email">
-      <input type="password" name="password" placeholder="password">
-      <input type="submit" value="login">
-      <input type="submit" value="register" formaction="/register">
+
+      <div class="row">
+        <div class="input-field col s12">
+          <input class="validate" type="text" name="email">
+          <label for="email">Email</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input class="validate" type="password" name="password">
+          <label for="password">Password</label>
+        </div>
+      </div>
+      <input class="btn waves-effect waves-light" type="submit" value="login">
+      <input class="btn waves-effect waves-light" type="submit" value="register" formaction="/register">
+
+
     </form>
   </div>
 </body>
