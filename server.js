@@ -2,12 +2,13 @@
 
 require('dotenv').config();
 
-const PORT        = process.env.PORT || 8080;
-const ENV         = process.env.ENV || "development";
-const express     = require("express");
-const bodyParser  = require("body-parser");
-const sass        = require("node-sass-middleware");
-const app         = express();
+const PORT            = process.env.PORT || 8080;
+const ENV             = process.env.ENV || "development";
+const express         = require("express");
+const bodyParser      = require("body-parser");
+const sass            = require("node-sass-middleware");
+const app             = express();
+const cookieSession  = require("cookie-session");
 
 const knexConfig  = require("./knexfile");
 const knex        = require("knex")(knexConfig[ENV]);
@@ -35,12 +36,22 @@ app.use("/styles", sass({
 }));
 app.use(express.static("public"));
 
+app.use(cookieSession({
+  name: 'session',
+  keys: ["key 1"],
+  maxAge: 24 * 60 * 60 * 1000
+}));
+
 // Mount all resource routes
 app.use("/api/users", usersRoutes(knex));
 
 // Home page
 app.get("/", (req, res) => {
-  res.render("index");
+  let user_id = req.session.user_id;
+  let templateVars = {
+    user_id
+  };
+  res.render("index", templateVars);
 });
 
 //register
@@ -63,10 +74,13 @@ app.post("/register", (req, res) => {
   })
 
   // Send registration info to Users database
-  knex('users').insert( { email: req.body.email, password: req.body.password } )
-  .then(() => {
-    res.redirect("/list");
-  });
+  const user_id = knex('users')
+    .returning('id')
+    .insert( { email: req.body.email, password: req.body.password } )
+    .then(() => {
+      req.session.user_id = user_id,
+      res.redirect("/list")
+    });
 
 });
 
@@ -84,7 +98,15 @@ app.post("/login", (req, res) => {
 
       if (req.body.email === user.email ) {
         if (req.body.password === user.password) {
-          res.redirect('/list');
+
+        const user_id = knex('users')
+          .returning('id')
+          .where({ email: user.email })
+          .then(() => {
+            req.session.user_id = user_id,
+            res.redirect("/list")
+          });
+
         } else {
           res.status(401).send('Please enter a valid email/password');
           return;
@@ -96,9 +118,11 @@ app.post("/login", (req, res) => {
 
 // UPDATE USER PROFILE
 app.get("/profile", (req, res) => {
+  let user_id = req.session.user_id;
   let email = "sensei_doug@gmail.com"
 
   let templateVars = {
+    user_id,
     email
   };
   res.render('profile', templateVars);
@@ -125,6 +149,7 @@ app.post("/profile", (req, res) => {
 
   /*
   Send updated info to Users database
+  Update existing user (not insert as new)
   knex('users').insert( { email: req.body.email, password: req.body.password } )
   .then(() => {
     res.redirect("/list");
@@ -137,7 +162,11 @@ app.post("/profile", (req, res) => {
 
 //TO-DO list
 app.get("/list", (req, res) => {
-  res.render('list');
+  let user_id = req.session.user_id;
+  let templateVars = {
+    user_id
+  };
+  res.render('list', templateVars);
 });
 
 app.post("/list", (req, res) => {
