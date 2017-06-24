@@ -19,13 +19,13 @@ $(() => {
 
     items.forEach( function(element) {
 
-    if (filterBy(element, "Movies/TVSeries", false)) {
+    // if (filterBy(element, "Movies/TVSeries", false)) {
 
       let item = createListElement(element);
 
       $('#todo-list').append(item);
 
-    }
+    // }
   })
 });
 
@@ -172,25 +172,29 @@ $(() => {
 
 $('.search_results').on('click', '.result', function () {
   let item = $(this).data("element");
+  $('.search_results').empty();
 
   $.ajax({
     method: 'POST',
     url: '/list',
     data: item
+  }).then(() => {
+
+    $.ajax({
+      method: "GET",
+      url: "/api/users/list",
+      dataType: "json"
+    })
+    .done((items) => {
+      $('#todo-list').empty();
+      items.forEach( function(element) {
+      let item = createListElement(element);
+      $('#todo-list').append(item);
+        });
+      });
+    });
+
   });
-
-
-
-
-  console.log($(this).data("element").category);
-
-});
-
-
-
-
-
-
 
 
 
