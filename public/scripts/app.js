@@ -86,14 +86,18 @@ $(() => {
   //to do: get search bar to replace the parameter search in the url
   $( "#search_bar .input-field" ).keypress(function (e) {
     if(e.which == 13) {
+
       e.preventDefault();
+
+
+
       $('.search_results').empty();
       $.ajax({
 
-         url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyBj7ISo5BYStqj48hzKmY3vXGNQn2EVqVc&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
+         url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyDbnXGNplJSpB8gYMBr49NTbHFXPGnXgW0&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
          method: 'GET',
       }).done((response) => {
-          // console.log(response.items);
+          console.log(response.items);
 
           for (let item of response.items) {
 
@@ -118,11 +122,11 @@ $(() => {
 
               if (title && image && description && subcategory) {
 
-                $("<div>").addClass("result")
+                $("<div style='display: none;'>").addClass("result")
                 .text(`${title} --- ${subcategory} --- ${description.substring(0,100)}...`)
                 .data("element", {"category": subcategory, "link": link, "title": title, "image": image,"description": description})
                 .appendTo($(".search_results"));
-
+                $('div.result').slideDown('slow');
               }
             }
           }
@@ -278,10 +282,11 @@ $(() => {
 
 
 
-$('.search_results').on('click', '.result', function () {
+$('.search_results').on('click', '.result', function (e) {
   let item = $(this).data("element");
-  $('.search_results').empty();
 
+
+  $('.search_results').empty();
   $.ajax({
     method: 'POST',
     url: '/list',
