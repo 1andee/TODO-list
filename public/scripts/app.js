@@ -59,13 +59,32 @@ $(() => {
 
   function createListElement(item) {
 
-  let item_entry = `<article>
+  let item_entry = `<article class="row">
+                        <h3 class="col s12">${item.item_name}</h3>
 
-                        <p>
-                          ${item.item_name}, ${item.category}, ${item.rank}, ${item.completed}
-                          <a id="${item.id}" class="waves-effect waves-teal btn-flat delete">Delete</a>
-                        </p>
+                          <div class="col s4">
+                            <img class="item_thumbnail"src="${item.thumbnail}"/>
+                          </div>
 
+                          <div class="col s8">
+
+                            <div class="item_description">
+                              Description: ${item.description}
+                            </div>
+
+                            <div class="item_buttons">
+                              <span>
+                                ${item.category}
+                              </span>
+                              <span>
+                                 ${item.rank}
+                              </span>
+                              <span class="waves-effect waves-light btn completed_boolean">
+                                ${item.completed}
+                              </span>
+                              <a id="${item.id}" class="waves-effect waves-light btn delete">Delete</a>
+                            </div>
+                          </div>
                     </article>`
 
   return item_entry;
