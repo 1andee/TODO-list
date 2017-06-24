@@ -321,24 +321,19 @@ $('.search_results').on('click', '.result', function (e) {
       url: '/list/delete',
       data: item_id
     }).then(() => {
-      // render everything in items table
+      $(this).closest("article").remove();
+    });
+  });
+
+
+    // logout (doesn't work yet)
+    $('.welcome').on('click', '#logout', function () {
+
       $.ajax({
-        method: "GET",
-        url: "/api/users/list",
-        dataType: "json"
-      })
-      .done((items) => {
-        $('#todo-list').empty();
-        items.forEach( function(element) {
-        let item = createListElement(element);
-        $('#todo-list').append(item);
-          });
-        });
+        method: 'POST',
+        url: '/logout',
       });
     });
-
-
-
 
 
 });

@@ -146,8 +146,12 @@ app.post("/list/delete", (req, res) => {
     .then(() => {
     res.redirect('/list');
   });
+});
 
-
+// route for logout (needs debugging)
+app.post("/logout", (req, res) => {
+  req.session = null;
+  res.redirect("/");
 });
 
 app.listen(PORT, () => {
