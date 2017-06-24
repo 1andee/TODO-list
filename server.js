@@ -105,8 +105,23 @@ app.get("/list", (req, res) => {
   res.render('list');
 });
 
-//new end point
-  // request to yelp --> yelp to json
+app.post("/list", (req, res) => {
+  let category = req.body.category;
+  let title = req.body.title;
+  let link = req.body.link;
+  console.log(category + title + link);
+
+  knex('items').insert({ //insert clicked item into items database
+    user_id: '1', //change this for cookieSession
+    item_name: title,
+    completed: 'false',
+    rank: '2',
+    category: category
+  }).then(() => {
+    res.redirect('/list');
+  });
+
+});
 
 app.listen(PORT, () => {
   console.log("Example app listening on port " + PORT);

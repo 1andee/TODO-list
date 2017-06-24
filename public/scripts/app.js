@@ -171,13 +171,15 @@ $(() => {
 
 
 $('.search_results').on('click', '.result', function () {
+  let item = $(this).data("element");
 
-  knex('items').insert({ //insert clicked item into items database
-    item_name: $(this).data("element").title,
-    completed: 'true',
-    rank: '5',
-    category: $(this).data("element").category
-  })
+  $.ajax({
+    method: 'POST',
+    url: '/list',
+    data: item
+  });
+
+
 
 
   console.log($(this).data("element").category);
