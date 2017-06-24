@@ -8,8 +8,8 @@ exports.seed = function(knex, Promise) {
         knex('items').insert({user_id: '1', item_name: 'Aibud', completed: 'false', rank: '1', category: 'Movies/TVSeries'}),
         knex('items').insert({user_id: '1', item_name: 'Airbud', completed: 'false', rank: '2', category: 'Movies/TVSeries'}),
         knex('items').insert({user_id: '1', item_name: 'Airbud', completed: 'false', rank: '3', category: 'Movies/TVSeries'}),
-        knex('items').insert({user_id: '1', item_name: 'Wilbur Mexicana', completed: 'false', rank: '4', category: 'Place'}),
-        knex('items').insert({user_id: '1', item_name: 'Avengers', completed: 'true', rank: '5', category: 'Movies/TVSeries'}),
+        knex('items').insert({user_id: '1', item_name: 'Wilbur Mexicana', completed: 'false', rank: '2', category: 'Place'}),
+        knex('items').insert({user_id: '1', item_name: 'Avengers', completed: 'true', rank: '1', category: 'Movies/TVSeries'}),
       ]);
     });
 };

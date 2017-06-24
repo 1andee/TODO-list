@@ -30,6 +30,7 @@ $(() => {
 });
 
 
+
   // function sortBy(items, sortCategory) {
 
 
@@ -43,6 +44,7 @@ $(() => {
   //   return items;
 
   // }
+
 
 
   function filterBy(element, category, completed) {
@@ -77,10 +79,11 @@ $(() => {
     'www.yelp.com': 'Place',
     'www.amazon.com': 'Product',
     'www.imdb.com': 'Movie/TVSeries'
+
   };
 
 
-  // var list = [];
+  var list = [];
 
   //to do: get search bar to replace the parameter search in the url
   $( "#search_bar .input-field" ).keypress(function (e) {
@@ -101,17 +104,23 @@ $(() => {
               // console.log(item.displayLink);
               // console.log(categories['www.imdb.com']);
               let category = categories[item.displayLink.toString()];
-
-              let title = cleanTitle(item, category);
+              let info = cleanInfo(item, category);
               let link = item.link;
 
+              let title = info.title;
+              let image = info.image;
+              let description = info.description;
 
-              // list.push({category})
-              $("<div>").addClass("result")
-              .text(`${title} ${category}`)
-              .data("element", {"title": title, "category": category, "link": link})
-              .appendTo($(".search_results"));
+              console.log(info);
 
+              if (title && image && description) {
+
+                $("<div>").addClass("result")
+                .text(`${title} ${category} ${description.substring(0,100)}`)
+                .data("element", {"title": title, "category": category, "link": link})
+                .appendTo($(".search_results"));
+
+              }
             }
           }
 
@@ -120,38 +129,109 @@ $(() => {
 
   })
 
-  function cleanTitle(item, category) {
 
-    console.log(item);
-    console.log(category);
+
+  function cleanInfo(item, category) {
+
+    // console.log(item);
+    // console.log(category);
 
     if (category === 'Place') {
 
-      return item.pagemap.localbusiness[0].name;
+      // return title = item.pagemap.localbusiness[0].name;
+
+      return searchYelp(item);
 
     } else if (category === 'Product') {
 
-      return item.pagemap.metatags[0]["og:title"];
+      return searchAmazon(item);
 
     } else if (category === 'Movie/TVSeries') {
 
-      if ('tvseries' in item.pagemap) {
-
-        return item.pagemap.tvseries[0].name;
-
-      } else if ('movie' in item.pagemap) {
-
-        return item.pagemap.movie[0].name;
-
-      } else {
-
-        return item.title;
-
-      }
+      return searchIMDB(item);
 
     }
 
   }
+
+
+
+  function searchYelp(item){
+
+    let path = item.pagemap;
+    let title = null;
+    let image = null;
+    let description = null;
+
+    if ('localbusiness' in path) {
+      title = item.pagemap.localbusiness[0].name;
+    }
+
+    if ('cse_thumbnail' in path) {
+      image = item.pagemap.cse_thumbnail[0].src;
+    }
+
+    if ('review' in path) {
+      description = item.pagemap.review[1].description;
+    }
+
+    return {title: title, image: image, description, description};
+
+  }
+
+
+
+  function searchAmazon(item){
+
+    let path = item.pagemap;
+    let title = null;
+    let image = null;
+    let description = null;
+
+    if ('metatags' in path) {
+      title = item.pagemap.metatags[0]["og:title"];
+      description = item.pagemap.metatags[0]["og:description"];
+    }
+
+    if ('cse_thumbnail' in path) {
+      image = item.pagemap.cse_thumbnail[0].src;
+    }
+
+    if ('review' in path) {
+      description = item.pagemap.review[1].description;
+    }
+
+    return {title: title, image: image, description, description};
+
+  }
+
+
+
+  function searchIMDB(item){
+
+    let path = item.pagemap;
+    let title = null;
+    let image = null;
+    let description = null;
+
+    if ('movie' in path) {
+      title = item.pagemap.movie[0].name;
+      description = item.pagemap.movie[0].description;
+    }
+
+    if ('tvseries' in path) {
+      title = item.pagemap.tvseries[0].name;
+      description = item.pagemap.tvseries[0].description;
+    }
+
+    if ('cse_thumbnail' in path) {
+      image = item.pagemap.cse_thumbnail[0].src;
+    }
+
+    return {title: title, image: image, description, description};
+
+  }
+
 
 
 
@@ -190,11 +270,12 @@ $('.search_results').on('click', '.result', function () {
       items.forEach( function(element) {
       let item = createListElement(element);
       $('#todo-list').append(item);
-        });
       });
     });
-
   });
+});
+
+
 
 
 
