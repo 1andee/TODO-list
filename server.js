@@ -48,7 +48,7 @@ app.post("/register", (req, res) => {
 
   // Conditional checks for email and password
   if (!req.body.email || !req.body.password) {
-  res.status(403).send('Please fill out all fields');
+  res.status(403).send('Please enter a valid email/password');
   return;
   }
 
@@ -56,7 +56,7 @@ app.post("/register", (req, res) => {
   .then((result)=> {
     for (let user of result) {
       if (req.body.email === user.email ) {
-        res.status(403).send('Email already exists');
+        res.status(403).send('Please enter a unique email');
         return;
       }
     }
@@ -74,7 +74,7 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
 
   if (!req.body.email || !req.body.password) {
-  res.status(403).send('Please fill out all fields');
+  res.status(403).send('Please enter a valid email/password');
   return;
   }
 
@@ -86,7 +86,7 @@ app.post("/login", (req, res) => {
         if (req.body.password === user.password) {
           res.redirect('/list');
         } else {
-          res.status(401).send("Password doesn't match");
+          res.status(401).send('Please enter a valid email/password');
           return;
         }
       }
@@ -102,6 +102,36 @@ app.get("/profile", (req, res) => {
     email
   };
   res.render('profile', templateVars);
+});
+
+// UPDATE USER PROFILE
+app.post("/profile", (req, res) => {
+
+  // Conditional checks for email and password
+  if (!req.body.email || !req.body.password) {
+  res.status(403).send('Please enter a valid email/password');
+  return;
+  }
+
+  knex.select().table('users')
+  .then((result)=> {
+    for (let user of result) {
+      if (req.body.email === user.email ) {
+        res.status(403).send('Please enter a unique email');
+        return;
+      }
+    }
+  })
+
+  /*
+  Send updated info to Users database
+  knex('users').insert( { email: req.body.email, password: req.body.password } )
+  .then(() => {
+    res.redirect("/list");
+  });
+
+  */
+
 });
 
 
