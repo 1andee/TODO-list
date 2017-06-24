@@ -1,40 +1,29 @@
 <%- include('partials/_header') %>
 
-      <!-- <form> -->
-        <div id="search_bar" class="search-wrapper card focused">
-          <input class="input-field" type="text" name="search" placeholder="Search..">
-        </div>
-        <div class="search_results">
-          <!-- display top 10 searches using ajax -->
-        </div>
-      <!-- </form> -->
-
-      <br>
-
-    <div>
-
-      <span id="all_dropdowns">
-
-        <a id = 'dropCategory' class='dropdown-button btn' data-activates='filterCategory'>Category</a>
-        <ul id='filterCategory' class='dropdown-content'>
-          <li>Movies/TVSeries</li>
-          <li>Place/Restaurant</li>
-          <li>Product/Book</li>
-        </ul>
-
-      </span>
-
-
-
+  <div class="search-and-categories">
+    <div id="search_bar" class="search-wrapper card focused">
+      <input class="input-field" type="text" name="search" placeholder="Search..">
+    </div>
+    <div class="search_results">
+      <!-- display top 10 searches using ajax -->
     </div>
 
-    <section id="todo-list" class="list_class">
+    <span id="all_dropdowns">
 
+      <a id = 'dropCategory' class='dropdown-button btn' data-activates='filterCategory'>Category</a>
+      <ul id='filterCategory' class='dropdown-content'>
+        <li>Movies/TVSeries</li>
+        <li>Place/Restaurant</li>
+        <li>Product/Book</li>
+      </ul>
 
+    </span>
 
+  </div>
 
-    </section>
+  <section id="todo-list" class="list_class">
+
+  </section>
 
   </body>
 </html>
-
