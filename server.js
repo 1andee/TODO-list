@@ -106,9 +106,7 @@ app.get("/list", (req, res) => {
 });
 
 app.post("/list", (req, res) => {
-  let category = req.body.category;
-  let title = req.body.title;
-  let link = req.body.link;
+  let { category, title, link } = req.body;
   console.log(category + title + link);
 
   knex('items').insert({ //insert clicked item into items database
@@ -116,7 +114,8 @@ app.post("/list", (req, res) => {
     item_name: title,
     completed: 'false',
     rank: '2',
-    category: category
+    category: category,
+    url: link
   }).then(() => {
     res.redirect('/list');
   });
@@ -127,5 +126,5 @@ app.post("/list", (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log("Example app listening on port " + PORT);
+  console.log("Kick List app listening on port " + PORT);
 });
