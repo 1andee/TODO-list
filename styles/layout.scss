@@ -21,3 +21,23 @@ body {
 .search_result {
   background-color: white;
 }
+#todo-list {
+  margin-top: 20px;
+}
+article {
+  background-color: white;
+  padding: 20px;
+
+  img .item_thumbnail  {
+    max-width: 170px;
+  }
+
+  .delete {
+    background-color: #304554;
+  }
+
+  .item_description {
+    min-height: 200px;
+  }
+
+}

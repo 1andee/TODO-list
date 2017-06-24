@@ -59,13 +59,32 @@ $(() => {
 
   function createListElement(item) {
 
-  let item_entry = `<article>
+  let item_entry = `<article class="row item_article" id="${item.id}">
+                        <h3 class="col s12">${item.item_name}</h3>
 
-                        <p>
-                          ${item.item_name}, ${item.category}, ${item.rank}, ${item.completed}
-                          <a id="${item.id}" class="waves-effect waves-teal btn-flat delete">Delete</a>
-                        </p>
+                          <div class="col s4">
+                            <img class="item_thumbnail"src="${item.thumbnail}"/>
+                          </div>
 
+                          <div class="col s8">
+
+                            <div class="item_description">
+                              Description: ${item.description}
+                            </div>
+
+                            <div class="item_buttons">
+                              <span>
+                                ${item.category}
+                              </span>
+                              <span>
+                                 ${item.rank}
+                              </span>
+                              <span class="waves-effect waves-light btn completed_boolean">
+                                ${item.completed}
+                              </span>
+                              <a class="waves-effect waves-light btn delete">Delete</a>
+                            </div>
+                          </div>
                     </article>`
 
   return item_entry;
@@ -267,8 +286,9 @@ $(() => {
 
 
 
-
-
+$('.list_class').on('click', '.completed_boolean', function () {
+  $(this).closest(".item_article").prop('id')
+});
 
 
 
@@ -313,7 +333,7 @@ $('.search_results').on('click', '.result', function (e) {
   // DELETE ITEM FROM ITEMS TABLE WHEN DELETE BUTTON IS CLICKED
   $('.list_class').on('click', '.delete', function () {
 
-    let item_id = {'item_id': $(this).attr('id')};
+    let item_id = {'item_id': $(this).closest(".item_article").prop('id')};
 
     // ajax post request to delete item
     $.ajax({
