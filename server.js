@@ -113,8 +113,9 @@ app.post("/list", (req, res) => {
   let description = req.body.description;
   let thumbnail = req.body.image;
   let url = req.body.link;
+  let subcategory = req.body.subcategory;
 
-  console.log(title + category + description + thumbnail + url);
+  // console.log(title + category + description + thumbnail + url + subcategory);
 
   knex('items').insert({ //insert clicked item into items database
     user_id: '1', //change this for cookieSession
@@ -124,7 +125,8 @@ app.post("/list", (req, res) => {
     category: category,
     description: description,
     thumbnail: thumbnail,
-    url: url
+    url: url,
+    subcategory: subcategory
 
   }).then(() => {
     res.redirect('/list');
@@ -133,8 +135,7 @@ app.post("/list", (req, res) => {
 });
 
 
-
-
 app.listen(PORT, () => {
   console.log("Kick List app listening on port " + PORT);
+
 });
