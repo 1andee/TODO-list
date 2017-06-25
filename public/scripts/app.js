@@ -59,17 +59,19 @@ $(() => {
 
   function createListElement(item) {
 
-  let item_entry = `<article class="row item_article" id="${item.id}">
-                        <h3 class="col s12">${item.item_name}</h3>
+  let item_entry = `<article class="row item_article hoverable" id="${item.id} ">
+                        <h3 class="col s12">${item.item_name}<i class="material-icons">info</i></h3>
 
-                          <div class="col s4">
+                        <div class="item-info-container">
+
+                          <div class="col s2">
                             <img class="item_thumbnail"src="${item.thumbnail}"/>
                           </div>
 
-                          <div class="col s8">
+                          <div class="col s10">
 
                             <div class="item_description">
-                              Description: ${item.description}
+                              <h5>Description:</h5> ${item.description}
                             </div>
 
                             <div class="item_buttons">
@@ -82,8 +84,9 @@ $(() => {
                               <span class="waves-effect waves-light btn completed_boolean">
                                 ${item.completed}
                               </span>
-                              <a class="waves-effect waves-light btn delete">Delete</a>
-                            </div>
+                                <a class="waves-effect waves-light btn delete">Delete</a>
+                             </div>
+                           </div>
                           </div>
                     </article>`
 
@@ -91,7 +94,10 @@ $(() => {
 
   }
 
-  //hard coded headers
+$('#todo-list').on('click', 'h3', function () {
+  $(this).siblings(".item-info-container").slideToggle('fast');
+});
+
 
 
   const categories = {
