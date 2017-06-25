@@ -1,56 +1,92 @@
 $(() => {
 
+
+  var filterRankVariable = 'All';
+  var filterCategoryVariable = 'All';
+  var filterCompletedVariable = 'All';
+
+  var sortDate = 'Descending';
+
+
+
   // render items name at /list
-  $.ajax({
-    method: "GET",
-    url: "/api/users/list",
-    dataType: "json"
-  }).done((items) => {
+  function loadList() {
+    $.ajax({
+      method: "GET",
+      url: "/api/users/list",
+      dataType: "json"
+    }).done((items) => {
 
-    $('#todo-list').empty();
+      $('#todo-list').empty();
 
-    // console.log(items);
+      items = sortBy(items, sortDate);
 
-    // console.log($('#dropRank option:selected'));
+      items.forEach( function(element) {
 
+        console.log(element.created_at);
 
-    // items = sortBy(items, "rank");
+        if (filterBy(element, filterRankVariable, filterCategoryVariable, filterCompletedVariable)) {
 
+          let item = createListElement(element);
 
-    items.forEach( function(element) {
+          $('#todo-list').append(item);
 
-    // if (filterBy(element, "Movies/TVSeries", false)) {
+        }
 
-      let item = createListElement(element);
+      });
 
-      $('#todo-list').append(item);
+      console.log( "Current Filters are Rank:" + filterRankVariable + " Category:" + filterCategoryVariable + " Completion:" + filterCompletedVariable + " Sort By:" + sortDate);
 
-    // }
-  })
-});
+    });
 
+  }
 
-
-  // function sortBy(items, sortCategory) {
-
-
-  //   items.sort(function(a,b){
-
-  //     return a[sortCategory] - b[sortCategory]
-
-  //   })
-
-
-  //   return items;
-
-  // }
+  loadList();
 
 
 
-  function filterBy(element, category, completed) {
+  function sortBy(items, order) {
 
-    if ( (element.category === category) && (element.completed === completed) ) {
-      return element;
+    if (order === 'Descending') {
+
+      items.sort(function(a,b){
+
+        return new Date(b.created_at) - new Date(a.created_at);
+
+      })
+
+    } else if (order === 'Ascending'){
+
+      items.sort(function(a,b){
+
+        return new Date(a.created_at) - new Date(b.created_at);
+
+      })
+
+    }
+
+    return items;
+
+  }
+
+
+
+  function filterBy(element, rank ,category, completed) {
+
+    let priority = {'1': 'High', '2': 'Medium', '3': 'Low'};
+
+    let element_rank = priority[element.rank];
+
+    let status = {'true': 'Done', 'false': 'To-Do'};
+
+    let element_completed = status[element.completed];
+
+    if ( (element_rank === rank) || (rank === 'All') ) {
+      if ( (element.category === category) || (category === 'All') ) {
+        if ( (element_completed === completed) || (completed === 'All') ) {
+          return element;
+        }
+      }
     }
 
     return null;
@@ -68,9 +104,21 @@ $(() => {
 
   let status = {'true': 'Done', 'false': 'To-Do'}
 
+  let date = (new Date(item.created_at));
+
+  let day = date.toDateString();
+
+  let time = date.toLocaleTimeString();
+
 
   let item_entry = `<article class="row item_article hoverable" id="${item.id} ">
-                        <h3 class="col s12">${item.item_name}<i class="material-icons">info</i></h3>
+                        <h3 class="col s12">${item.item_name}
+                        <i class="material-icons">info</i>
+                        <br />
+                        Date Created: ${day}
+                        <br />
+                        Time Created: ${time}
+                        </h3>
 
                         <div class="item-info-container">
 
@@ -151,14 +199,18 @@ $('#todo-list').on('click', 'h3', function () {
 
               let title = info.title;
               let image = info.image;
-              let description = info.description.substring(0,100).concat("...");
+              let description = info.description;
               let subcategory = info.subcategory;
 
               //console.log(info);
 
               if (title && image && description && subcategory) {
 
+
+                description = description.substring(0,100).concat("...");
+
                 $("<div style='display: none;'>").addClass("result").addClass('hoverable')
+
                 .text(`${title} --- ${category} --- ${description}...`)
                 .data("element", {"category": category, "link": link, "title": title, "image": image,"description": description, "subcategory": subcategory})
                 .appendTo($(".search_results"));
@@ -323,19 +375,15 @@ $('.search_results').on('click', '.result', function (e) {
     data: item
   }).then(() => {
 
-    $.ajax({
-      method: "GET",
-      url: "/api/users/list",
-      dataType: "json"
-    })
-    .done((items) => {
-      $('#todo-list').empty();
-      items.forEach( function(element) {
-      let item = createListElement(element);
-      $('#todo-list').append(item);
-      });
-    });
+    filterRankVariable = 'All';
+    filterCategoryVariable = 'All';
+    filterCompletedVariable = 'All';
+    sortDate = 'Descending';
+
+    loadList();
+
   });
+
 });
 
 
@@ -442,6 +490,56 @@ $('.search_results').on('click', '.result', function (e) {
     });
 
   });
+
+
+
+  $('#filterRank #0').add('#filterRank #1').add('#filterRank #2').add('#filterRank #3').on('click', function () {
+
+  filterRankVariable = $(this).text();
+
+  // console.log(filterRankVariable);
+
+  loadList();
+
+  });
+
+
+
+  $('#filterCategory #0').add('#filterCategory #1').add('#filterCategory #2').add('#filterCategory #3').on('click', function () {
+
+    filterCategoryVariable = $(this).text();
+
+    // console.log(filterCategoryVariable);
+
+    loadList();
+
+    });
+
+
+
+  $('#filterCompleted #0').add('#filterCompleted #1').add('#filterCompleted #2').on('click', function () {
+
+    filterCompletedVariable = $(this).text();
+
+    // console.log(filterCompletedVariable);
+
+    loadList();
+
+    });
+
+
+
+  $('#sortDate #0').add('#sortDate #1').on('click', function () {
+
+    sortDate = $(this).text();
+
+    // console.log(filterCompletedVariable);
+
+    loadList();
+
+    });
+
+
 
 
 
