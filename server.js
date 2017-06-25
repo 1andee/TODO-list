@@ -50,17 +50,14 @@ app.get("/", (req, res) => {
   let user_id = req.session.user_id;
 
   if (user_id) {
-    console.log(`USER ID IS ${user_id}`);
     res.redirect("/list");
   } else {
-    console.log(`NO USER ID`);
     res.render('index');
   };
 });
 
 // registration form
 app.post("/register", (req, res) => {
-
   let invalidFormSubmit = false;
 
   // Checks if email and password fields are empty
@@ -80,6 +77,7 @@ app.post("/register", (req, res) => {
         return;
       };
     };
+
     if (!invalidFormSubmit) {
       // Adds new user to database and sets cookie
       knex('users')
@@ -87,7 +85,6 @@ app.post("/register", (req, res) => {
       .insert( { email: req.body.email, password: req.body.password } )
       .then((user) => {
         req.session.user_id = user[0];
-        console.log("USER ID IS", user[0]);
         res.redirect("/list");
       });
     };
@@ -96,7 +93,6 @@ app.post("/register", (req, res) => {
 
 //login
 app.post("/login", (req, res) => {
-
   let loginCredentials = false;
 
   // Checks if email and password fields are empty
@@ -194,7 +190,6 @@ app.get("/list", (req, res) => {
   let user_id = req.session.user_id;
 
   if (!user_id) {
-    console.log("NO USER ID FOUND");
     res.redirect("/");
   } else {
     knex('users')
@@ -203,19 +198,17 @@ app.get("/list", (req, res) => {
     .first()
     .then((user) => {
       const user_email = user.email;
-      console.log(`USER EMAIL IS ${user_email}`);
       let templateVars = {
         user_id,
         user_email
       };
       res.render('list', templateVars);
     });
-  }
-
+  };
 });
 
-app.post("/list", (req, res) => {
 
+app.post("/list", (req, res) => {
   let title = req.body.title;
   let category = req.body.category;
   let description = req.body.description;
@@ -255,54 +248,38 @@ app.post("/list/delete", (req, res) => {
 });
 
 
-
 app.post("/list/status", (req, res) => {
-
   let item_id = req.body.item_id;
 
   knex.select('completed')
   .from('items')
   .where('id', item_id)
-  .then((query)=>{
-
+  .then((query) => {
     let bool = query[0].completed;
-
     knex('items')
     .where('id', item_id)
     .update('completed', !bool)
     .then(() => {
       res.redirect('/list');
     });
-
   });
-
 });
 
 
-
 app.post("/list/rank", (req, res) => {
-
   let item_id = req.body.item_id;
 
   knex.select('rank')
   .from('items')
   .where('id', item_id)
-  .then((query)=>{
-
+  .then((query) => {
     let rank = query[0].rank;
-
     if (rank === 1) {
-
       rank = 3;
-
     } else if (rank === 2) {
-
       rank = 1;
-
     } else if (rank === 3) {
-
       rank = 2;
-
     }
 
     knex('items')
@@ -311,36 +288,25 @@ app.post("/list/rank", (req, res) => {
     .then(() => {
       res.redirect('/list');
     });
-
   });
-
 });
 
 
-
 app.post("/list/category", (req, res) => {
-
   let item_id = req.body.item_id;
 
   knex.select('category')
   .from('items')
   .where('id', item_id)
-  .then((query)=>{
+  .then((query) => {
 
     let category = query[0].category;
-
     if (category === 'Place/Restaurant') {
-
       category = 'Product/Book';
-
     } else if (category === 'Product/Book') {
-
       category = 'Movie/TVSeries';
-
     } else if (category === 'Movie/TVSeries') {
-
       category = 'Place/Restaurant';
-
     }
 
     knex('items')
@@ -349,18 +315,12 @@ app.post("/list/category", (req, res) => {
     .then(() => {
       res.redirect('/list');
     });
-
   });
-
 });
 
 
-
-
-
-// route for logout (needs debugging)
-app.post("/logout", (req, res) => {
-  console.log("LOGGING OUT USER");
+// Logout
+app.get("/logout", (req, res) => {
   req.session = null;
   res.redirect('/');
 });
@@ -370,7 +330,5 @@ app.post("/logout", (req, res) => {
 // });
 
 app.listen(PORT, () => {
-
   console.log("Kick List app listening on port " + PORT);
-
 });

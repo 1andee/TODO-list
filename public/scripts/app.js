@@ -96,65 +96,65 @@ $(() => {
   function createListElement(item) {
 
 
-  let rank = item.rank;
+    let rank = item.rank;
 
-  let priority = {'1': 'High', '2': 'Medium', '3': 'Low'};
+    let priority = {'1': 'High', '2': 'Medium', '3': 'Low'};
 
-  let complete = item.completed;
+    let complete = item.completed;
 
-  let status = {'true': 'Done', 'false': 'To-Do'}
+    let status = {'true': 'Done', 'false': 'To-Do'}
 
-  let date = (new Date(item.created_at));
+    let date = (new Date(item.created_at));
 
-  let day = date.toDateString();
+    let day = date.toDateString();
 
-  let time = date.toLocaleTimeString();
+    let time = date.toLocaleTimeString();
 
 
-  let item_entry = `<article class="row item_article hoverable" id="${item.id} ">
-                        <h3 class="col s12">${item.item_name}
-                        <i class="material-icons">info</i>
-                        <br />
-                        Date Created: ${day}
-                        <br />
-                        Time Created: ${time}
-                        </h3>
+    let item_entry = `<article class="row item_article hoverable" id="${item.id} ">
+    <h3 class="col s12">${item.item_name}
+    <i class="material-icons">info</i>
+    <br />
+    Date Created: ${day}
+    <br />
+    Time Created: ${time}
+    </h3>
 
-                        <div class="item-info-container">
+    <div class="item-info-container">
 
-                          <div class="col s2">
-                            <img class="item_thumbnail"src="${item.thumbnail}"/>
-                          </div>
+    <div class="col s2">
+    <img class="item_thumbnail"src="${item.thumbnail}"/>
+    </div>
 
-                          <div class="col s10">
+    <div class="col s10">
 
-                            <div class="item_description">
-                              <h5>Description:</h5> ${item.description}
-                            </div>
+    <div class="item_description">
+    <h5>Description:</h5> ${item.description}
+    </div>
 
-                            <div class="item_buttons">
-                              <span class="waves-effect waves-light btn category_button">
-                                ${item.category}
-                              </span>
-                              <span class="waves-effect waves-light btn rank_button">
-                                 ${priority[rank]}
-                              </span>
-                              <span class="waves-effect waves-light btn completed_boolean">
-                                ${status[complete]}
-                              </span>
-                                <a class="waves-effect waves-light btn delete">Delete</a>
-                             </div>
-                           </div>
-                          </div>
-                    </article>`
+    <div class="item_buttons">
+    <span class="waves-effect waves-light btn category_button">
+    ${item.category}
+    </span>
+    <span class="waves-effect waves-light btn rank_button">
+    ${priority[rank]}
+    </span>
+    <span class="waves-effect waves-light btn completed_boolean">
+    ${status[complete]}
+    </span>
+    <a class="waves-effect waves-light btn delete">Delete</a>
+    </div>
+    </div>
+    </div>
+    </article>`
 
-  return item_entry;
+    return item_entry;
 
   }
 
-$('#todo-list').on('click', 'h3', function () {
-  $(this).siblings(".item-info-container").slideToggle('slow');
-});
+  $('#todo-list').on('click', 'h3', function () {
+    $(this).siblings(".item-info-container").slideToggle('slow');
+  });
 
 
 
@@ -178,48 +178,48 @@ $('#todo-list').on('click', 'h3', function () {
       $('.search_results').empty();
       $.ajax({
 
-         url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyDbnXGNplJSpB8gYMBr49NTbHFXPGnXgW0&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
-         method: 'GET',
+        url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyDbnXGNplJSpB8gYMBr49NTbHFXPGnXgW0&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
+        method: 'GET',
       }).done((response) => {
-          //console.log(response.items);
+        //console.log(response.items);
 
-          for (let item of response.items) {
+        for (let item of response.items) {
 
-            if (item.displayLink in categories) {
+          if (item.displayLink in categories) {
 
-              // let title = item.title;
-              // console.log(item.displayLink);
-              // console.log(categories['www.imdb.com']);
-
-
-              let category = categories[item.displayLink.toString()];
-              let link = item.link;
-
-              let info = cleanInfo(item, category);
-
-              let title = info.title;
-              let image = info.image;
-              let description = info.description;
-              let subcategory = info.subcategory;
-
-              //console.log(info);
-
-              if (title && image && description && subcategory) {
+            // let title = item.title;
+            // console.log(item.displayLink);
+            // console.log(categories['www.imdb.com']);
 
 
-                description = description.substring(0,100).concat("...");
+            let category = categories[item.displayLink.toString()];
+            let link = item.link;
 
-                $("<div style='display: none;'>").addClass("result").addClass('hoverable')
+            let info = cleanInfo(item, category);
 
-                .text(`${title} --- ${category} --- ${description}...`)
-                .data("element", {"category": category, "link": link, "title": title, "image": image,"description": description, "subcategory": subcategory})
-                .appendTo($(".search_results"));
-                $('div.result').slideDown('slow');
-              }
+            let title = info.title;
+            let image = info.image;
+            let description = info.description;
+            let subcategory = info.subcategory;
+
+            //console.log(info);
+
+            if (title && image && description && subcategory) {
+
+
+              description = description.substring(0,100).concat("...");
+
+              $("<div style='display: none;'>").addClass("result").addClass('hoverable')
+
+              .text(`${title} --- ${category} --- ${description}...`)
+              .data("element", {"category": category, "link": link, "title": title, "image": image,"description": description, "subcategory": subcategory})
+              .appendTo($(".search_results"));
+              $('div.result').slideDown('slow');
             }
           }
+        }
 
-        });
+      });
     }
 
   })
@@ -364,27 +364,27 @@ $('#todo-list').on('click', 'h3', function () {
 
 
 
-$('.search_results').on('click', '.result', function (e) {
-  let item = $(this).data("element");
+  $('.search_results').on('click', '.result', function (e) {
+    let item = $(this).data("element");
 
 
-  $('.search_results').empty();
-  $.ajax({
-    method: 'POST',
-    url: '/list',
-    data: item
-  }).then(() => {
+    $('.search_results').empty();
+    $.ajax({
+      method: 'POST',
+      url: '/list',
+      data: item
+    }).then(() => {
 
-    filterRankVariable = 'All';
-    filterCategoryVariable = 'All';
-    filterCompletedVariable = 'All';
-    sortDate = 'Descending';
+      filterRankVariable = 'All';
+      filterCategoryVariable = 'All';
+      filterCompletedVariable = 'All';
+      sortDate = 'Descending';
 
-    loadList();
+      loadList();
+
+    });
 
   });
-
-});
 
 
   // DELETE ITEM FROM ITEMS TABLE WHEN DELETE BUTTON IS CLICKED
@@ -495,11 +495,11 @@ $('.search_results').on('click', '.result', function (e) {
 
   $('#filterRank #0').add('#filterRank #1').add('#filterRank #2').add('#filterRank #3').on('click', function () {
 
-  filterRankVariable = $(this).text();
+    filterRankVariable = $(this).text();
 
-  // console.log(filterRankVariable);
+    // console.log(filterRankVariable);
 
-  loadList();
+    loadList();
 
   });
 
@@ -513,7 +513,7 @@ $('.search_results').on('click', '.result', function (e) {
 
     loadList();
 
-    });
+  });
 
 
 
@@ -525,7 +525,7 @@ $('.search_results').on('click', '.result', function (e) {
 
     loadList();
 
-    });
+  });
 
 
 
@@ -537,44 +537,6 @@ $('.search_results').on('click', '.result', function (e) {
 
     loadList();
 
-    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // logout (doesn't work yet)
-    $('.welcome').on('click', '#logout', function () {
-
-      $.ajax({
-        method: 'POST',
-        url: '/logout',
-      });
-    });
-
-
-
-
+  });
 
 });
