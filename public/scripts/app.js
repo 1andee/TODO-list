@@ -105,7 +105,7 @@ $(() => {
   }
 
 $('#todo-list').on('click', 'h3', function () {
-  $(this).siblings(".item-info-container").slideToggle('fast');
+  $(this).siblings(".item-info-container").slideToggle('slow');
 });
 
 
@@ -151,7 +151,7 @@ $('#todo-list').on('click', 'h3', function () {
 
               let title = info.title;
               let image = info.image;
-              let description = info.description;
+              let description = info.description.substring(0,100).concat("...");
               let subcategory = info.subcategory;
 
               //console.log(info);
@@ -159,7 +159,7 @@ $('#todo-list').on('click', 'h3', function () {
               if (title && image && description && subcategory) {
 
                 $("<div style='display: none;'>").addClass("result")
-                .text(`${title} --- ${category} --- ${description.substring(0,100)}...`)
+                .text(`${title} --- ${category} --- ${description}...`)
                 .data("element", {"category": category, "link": link, "title": title, "image": image,"description": description, "subcategory": subcategory})
                 .appendTo($(".search_results"));
                 $('div.result').slideDown('slow');
