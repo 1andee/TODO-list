@@ -55,81 +55,82 @@ app.get("/", (req, res) => {
   } else {
     console.log(`NO USER ID`);
     res.render('index');
-  }
-
+  };
 });
 
 // registration form
 app.post("/register", (req, res) => {
 
-  let flag = false;
+  let invalidFormSubmit = false;
 
-  // Conditional checks for email and password
+  // Checks if email and password fields are empty
   if (!req.body.email || !req.body.password) {
-  let flag = true;
-  res.status(403).send('Please enter a valid email/password');
-  return;
-  }
+    let invalidFormSubmit = true;
+    res.status(401).send('Please enter a valid email/password');
+    return;
+  };
 
+  // Checks if email already exists in database
   knex.select().table('users')
   .then((result)=> {
     for (let user of result) {
-      if (req.body.email === user.email ) {
-        let flag = true;
+      if (req.body.email === user.email) {
+        let invalidFormSubmit = true;
         res.status(403).send('Please enter a unique email');
         return;
-      }
-    }
-  })
-
-  // Adds registration to database and sets cookie
-  if (flag === false) {
-    knex('users')
-    .returning('id')
-    .insert( { email: req.body.email, password: req.body.password } )
-    .then((user) => {
-      req.session.user_id = user[0];
-      console.log("USER ID IS", user[0]);
-      res.redirect("/list");
-    });
-  }
-
+      };
+    };
+    if (!invalidFormSubmit) {
+      // Adds new user to database and sets cookie
+      knex('users')
+      .returning('id')
+      .insert( { email: req.body.email, password: req.body.password } )
+      .then((user) => {
+        req.session.user_id = user[0];
+        console.log("USER ID IS", user[0]);
+        res.redirect("/list");
+      });
+    };
+  });
 });
 
 //login
 app.post("/login", (req, res) => {
 
-  // Conditional checks for email and password
-  if (!req.body.email || !req.body.password) {
-    res.status(403).send('Please enter a valid email/password');
-    return;
-  }
+  let loginCredentials = false;
 
-  // Checks login details against those in database
+  // Checks if email and password fields are empty
+  if (!req.body.email || !req.body.password) {
+    loginCredentials = false;
+    res.status(401).send('Please enter a valid email/password');
+    return;
+  };
+
+  // Verify login details in database
   knex.select().table('users')
   .then((result)=> {
     for (let user of result) {
-
-      if (req.body.email === user.email && req.body.password === user.password) {
-
-            let user_email = req.body.email;
-            // Generates cookie for user
-            knex('users')
-            .returning('id')
-            .where('email', user_email)
-            .then((user) => {
-              req.session.user_id = user[0].id;
-              console.log("USER ID IS", user[0].id);
-              res.redirect('/list');
-            });
-
-       }  else {
-        res.status(401).send('Please enter a valid email/password');
-        return;
-      }
-    }
-  })
-
+      if (req.body.email === user.email) {
+        if (req.body.password === user.password) {
+          // Login successful, add cookie and redirect
+          loginCredentials = true;
+          let user_email = req.body.email;
+          knex('users')
+          .returning('id')
+          .where('email', user_email)
+          .then((user) => {
+            req.session.user_id = user[0].id;
+            console.log("USER ID IS", user[0].id);
+            res.redirect('/list');
+          });
+        };
+      };
+    };
+    if (!loginCredentials) {
+      res.status(403).send('Please enter a valid email/password');
+      return;
+    };
+  });
 });
 
 // UPDATE USER PROFILE
@@ -153,7 +154,7 @@ app.get("/profile", (req, res) => {
       };
       res.render('profile', templateVars);
     });
-  }
+  };
 });
 
 // UPDATE USER PROFILE
@@ -161,8 +162,8 @@ app.post("/profile", (req, res) => {
 
   // Conditional checks for email and password
   if (!req.body.email || !req.body.password) {
-  res.status(403).send('Please enter a valid email/password');
-  return;
+    res.status(403).send('Please enter a valid email/password');
+    return;
   }
 
   knex.select().table('users')
@@ -180,10 +181,10 @@ app.post("/profile", (req, res) => {
   Update existing user (not insert as new)
   knex('users').update( { email: req.body.email, password: req.body.password } )
   .then(() => {
-    res.redirect("/list");
-  });
+  res.redirect("/list");
+});
 
-  */
+*/
 
 });
 
@@ -246,9 +247,9 @@ app.post("/list/delete", (req, res) => {
 
   // knex command to remove selected item
   knex('items')
-    .where('id', item_id)
-    .del()
-    .then(() => {
+  .where('id', item_id)
+  .del()
+  .then(() => {
     res.redirect('/list');
   });
 });
@@ -260,20 +261,20 @@ app.post("/list/status", (req, res) => {
   let item_id = req.body.item_id;
 
   knex.select('completed')
-              .from('items')
-              .where('id', item_id)
-              .then((query)=>{
+  .from('items')
+  .where('id', item_id)
+  .then((query)=>{
 
-                  let bool = query[0].completed;
+    let bool = query[0].completed;
 
-                  knex('items')
-                  .where('id', item_id)
-                  .update('completed', !bool)
-                  .then(() => {
-                  res.redirect('/list');
-                });
+    knex('items')
+    .where('id', item_id)
+    .update('completed', !bool)
+    .then(() => {
+      res.redirect('/list');
+    });
 
-              });
+  });
 
 });
 
@@ -284,34 +285,34 @@ app.post("/list/rank", (req, res) => {
   let item_id = req.body.item_id;
 
   knex.select('rank')
-              .from('items')
-              .where('id', item_id)
-              .then((query)=>{
+  .from('items')
+  .where('id', item_id)
+  .then((query)=>{
 
-                  let rank = query[0].rank;
+    let rank = query[0].rank;
 
-                  if (rank === 1) {
+    if (rank === 1) {
 
-                    rank = 3;
+      rank = 3;
 
-                  } else if (rank === 2) {
+    } else if (rank === 2) {
 
-                    rank = 1;
+      rank = 1;
 
-                  } else if (rank === 3) {
+    } else if (rank === 3) {
 
-                    rank = 2;
+      rank = 2;
 
-                  }
+    }
 
-                  knex('items')
-                  .where('id', item_id)
-                  .update('rank', rank)
-                  .then(() => {
-                  res.redirect('/list');
-                });
+    knex('items')
+    .where('id', item_id)
+    .update('rank', rank)
+    .then(() => {
+      res.redirect('/list');
+    });
 
-              });
+  });
 
 });
 
@@ -322,34 +323,34 @@ app.post("/list/category", (req, res) => {
   let item_id = req.body.item_id;
 
   knex.select('category')
-              .from('items')
-              .where('id', item_id)
-              .then((query)=>{
+  .from('items')
+  .where('id', item_id)
+  .then((query)=>{
 
-                  let category = query[0].category;
+    let category = query[0].category;
 
-                  if (category === 'Place/Restaurant') {
+    if (category === 'Place/Restaurant') {
 
-                    category = 'Product/Book';
+      category = 'Product/Book';
 
-                  } else if (category === 'Product/Book') {
+    } else if (category === 'Product/Book') {
 
-                    category = 'Movie/TVSeries';
+      category = 'Movie/TVSeries';
 
-                  } else if (category === 'Movie/TVSeries') {
+    } else if (category === 'Movie/TVSeries') {
 
-                    category = 'Place/Restaurant';
+      category = 'Place/Restaurant';
 
-                  }
+    }
 
-                  knex('items')
-                  .where('id', item_id)
-                  .update('category', category)
-                  .then(() => {
-                  res.redirect('/list');
-                });
+    knex('items')
+    .where('id', item_id)
+    .update('category', category)
+    .then(() => {
+      res.redirect('/list');
+    });
 
-              });
+  });
 
 });
 
