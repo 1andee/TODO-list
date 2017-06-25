@@ -55,80 +55,82 @@ app.get("/", (req, res) => {
   } else {
     console.log(`NO USER ID`);
     res.render('index');
-  }
-
+  };
 });
 
 // registration form
 app.post("/register", (req, res) => {
 
-  let flag = false;
+  let invalidFormSubmit = false;
 
-  // Conditional checks for email and password
+  // Checks if email and password fields are empty
   if (!req.body.email || !req.body.password) {
-  let flag = true;
-  res.status(403).send('Please enter a valid email/password');
-  return;
-  }
+    let invalidFormSubmit = true;
+    res.status(401).send('Please enter a valid email/password');
+    return;
+  };
 
+  // Checks if email already exists in database
   knex.select().table('users')
   .then((result)=> {
     for (let user of result) {
-      if (req.body.email === user.email ) {
-        let flag = true;
+      if (req.body.email === user.email) {
+        let invalidFormSubmit = true;
         res.status(403).send('Please enter a unique email');
         return;
-      }
-    }
-  })
-
-  // Adds registration to database and sets cookie
-  if (flag === false) {
-    knex('users')
-    .returning('id')
-    .insert( { email: req.body.email, password: req.body.password } )
-    .then((user) => {
-      req.session.user_id = user[0];
-      console.log("USER ID IS", user[0]);
-      res.redirect("/list");
-    });
-  }
-
+      };
+    };
+    if (!invalidFormSubmit) {
+      // Adds new user to database and sets cookie
+      knex('users')
+      .returning('id')
+      .insert( { email: req.body.email, password: req.body.password } )
+      .then((user) => {
+        req.session.user_id = user[0];
+        console.log("USER ID IS", user[0]);
+        res.redirect("/list");
+      });
+    };
+  });
 });
 
 //login
 app.post("/login", (req, res) => {
 
-  // Conditional checks for email and password
-  if (!req.body.email || !req.body.password) {
-  res.status(403).send('Please enter a valid email/password');
-  return;
-  }
+  let loginCredentials = false;
 
-  // Checks login details against those in database
+  // Checks if email and password fields are empty
+  if (!req.body.email || !req.body.password) {
+    loginCredentials = false;
+    res.status(401).send('Please enter a valid email/password');
+    return;
+  };
+
+  // Verify login details in database
   knex.select().table('users')
   .then((result)=> {
     for (let user of result) {
-
-      if (req.body.email === user.email ) {
+      if (req.body.email === user.email) {
         if (req.body.password === user.password) {
-            let user_email = req.body.email;
-            // Generates cookie for user
-            knex('users')
-            .returning('id')
-            .where('email', user_email)
-            .then((user) => {
-              req.session.user_id = user[0].id;
-              console.log("USER ID IS", user[0].id);
-              res.redirect('/list');
-            });
-        } else {
-          res.status(401).send('Please enter a valid email/password');
-          return;
-        }
-      }
-    }
-  })
+          // Login successful, add cookie and redirect
+          loginCredentials = true;
+          let user_email = req.body.email;
+          knex('users')
+          .returning('id')
+          .where('email', user_email)
+          .then((user) => {
+            req.session.user_id = user[0].id;
+            console.log("USER ID IS", user[0].id);
+            res.redirect('/list');
+          });
+        };
+      };
+    };
+    if (!loginCredentials) {
+      res.status(403).send('Please enter a valid email/password');
+      return;
+    };
+  });
 
 });
 
@@ -153,7 +155,7 @@ app.get("/profile", (req, res) => {
       };
       res.render('profile', templateVars);
     });
-  }
+  };
 });
 
 // UPDATE USER PROFILE
