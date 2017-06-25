@@ -8,14 +8,41 @@
       <!-- display top 10 searches using ajax -->
     </div>
 
-    <span id="all_dropdowns">
+    <span class="all_dropdowns">
 
-      <a id = 'dropCategory' class='dropdown-button btn' data-activates='filterCategory'>Category</a>
-      <ul id='filterCategory' class='dropdown-content'>
-        <li>Movies/TVSeries</li>
-        <li>Place/Restaurant</li>
-        <li>Product/Book</li>
+      <a class='dropdown-button btn' data-activates='filterRank'>Priority</a>
+
+      <ul id='filterRank' class='dropdown-content'>
+        <li id="0">All</li>
+        <li id="1">High</li>
+        <li id="2">Medium</li>
+        <li id="3">Low</li>
       </ul>
+
+      <a class='dropdown-button btn' data-activates='filterCategory'>Category</a>
+
+      <ul id='filterCategory' class='dropdown-content'>
+        <li id="0">All</li>
+        <li id="1">Movie/TVSeries</li>
+        <li id="2">Place/Restaurant</li>
+        <li id="3">Product/Book</li>
+      </ul>
+
+      <a class='dropdown-button btn' data-activates='filterCompleted'>Status</a>
+
+      <ul id='filterCompleted' class='dropdown-content'>
+        <li id="0">All</li>
+        <li id="1">To-Do</li>
+        <li id="2">Done</li>
+      </ul>
+
+      <a class='dropdown-button btn' data-activates='sortDate'>Date Created</a>
+
+      <ul id='sortDate' class='dropdown-content'>
+        <li id="0">Ascending</li>
+        <li id="1">Descending</li>
+      </ul>
+
 
     </span>
 
