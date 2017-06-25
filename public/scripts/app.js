@@ -584,39 +584,4 @@ $(() => {
   });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // logout (doesn't work yet)
-    $('.welcome').on('click', '#logout', function () {
-
-      $.ajax({
-        method: 'POST',
-        url: '/logout',
-      });
-    });
-
-
-
-
 });
