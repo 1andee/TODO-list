@@ -129,8 +129,14 @@ $(() => {
                           <div class="col s10">
 
                             <div class="item_description">
-                              <h5>Description:</h5> ${item.description}
+                              <h5>Description:</h5>
+                              ${item.description}</br>
+                              <a href="${item.url}"><h5>Link</h5></a>
                             </div>
+
+
+
+
 
                             <div class="item_buttons">
                               <span class="waves-effect waves-light btn category_button">
@@ -513,7 +519,7 @@ $('.search_results').on('click', '.result', function (e) {
 
     loadList();
 
-    });
+  });
 
 
 
@@ -525,7 +531,7 @@ $('.search_results').on('click', '.result', function (e) {
 
     loadList();
 
-    });
+  });
 
 
 
@@ -537,8 +543,22 @@ $('.search_results').on('click', '.result', function (e) {
 
     loadList();
 
-    });
+  });
 
+
+
+  $('#resetButton').on('click', function () {
+
+    filterRankVariable = 'All';
+    filterCategoryVariable = 'All';
+    filterCompletedVariable = 'All';
+    sortDate = 'Descending';
+
+    // console.log('reset list')
+
+    loadList();
+
+  });
 
 
 
