@@ -145,6 +145,110 @@ app.post("/list/delete", (req, res) => {
   });
 });
 
+
+
+app.post("/list/status", (req, res) => {
+
+  let item_id = req.body.item_id;
+
+  knex.select('completed')
+              .from('items')
+              .where('id', item_id)
+              .then((query)=>{
+
+                  let bool = query[0].completed;
+
+                  knex('items')
+                  .where('id', item_id)
+                  .update('completed', !bool)
+                  .then(() => {
+                  res.redirect('/list');
+                });
+
+              });
+
+});
+
+
+
+app.post("/list/rank", (req, res) => {
+
+  let item_id = req.body.item_id;
+
+  knex.select('rank')
+              .from('items')
+              .where('id', item_id)
+              .then((query)=>{
+
+                  let rank = query[0].rank;
+
+                  if (rank === 1) {
+
+                    rank = 3;
+
+                  } else if (rank === 2) {
+
+                    rank = 1;
+
+                  } else if (rank === 3) {
+
+                    rank = 2;
+
+                  }
+
+                  knex('items')
+                  .where('id', item_id)
+                  .update('rank', rank)
+                  .then(() => {
+                  res.redirect('/list');
+                });
+
+              });
+
+});
+
+
+
+app.post("/list/category", (req, res) => {
+
+  let item_id = req.body.item_id;
+
+  knex.select('category')
+              .from('items')
+              .where('id', item_id)
+              .then((query)=>{
+
+                  let category = query[0].category;
+
+                  if (category === 'Place/Restaurant') {
+
+                    category = 'Product/Book';
+
+                  } else if (category === 'Product/Book') {
+
+                    category = 'Movie/TVSeries';
+
+                  } else if (category === 'Movie/TVSeries') {
+
+                    category = 'Place/Restaurant';
+
+                  }
+
+                  knex('items')
+                  .where('id', item_id)
+                  .update('category', category)
+                  .then(() => {
+                  res.redirect('/list');
+                });
+
+              });
+
+});
+
+
+
+
+
 // route for logout (needs debugging)
 app.post("/logout", (req, res) => {
   req.session = null;
@@ -156,6 +260,7 @@ app.post("/logout", (req, res) => {
 // });
 
 app.listen(PORT, () => {
+
   console.log("Kick List app listening on port " + PORT);
 
 });

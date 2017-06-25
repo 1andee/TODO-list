@@ -59,6 +59,14 @@ $(() => {
 
   function createListElement(item) {
 
+  let rank = item.rank;
+
+  let priority = {'1': 'High', '2': 'Medium', '3': 'Low'};
+
+  let complete = item.completed;
+
+  let status = {'true': 'Done', 'false': 'To-Do'}
+
   let item_entry = `<article class="row item_article" id="${item.id}">
                         <h3 class="col s12">${item.item_name}</h3>
 
@@ -73,14 +81,14 @@ $(() => {
                             </div>
 
                             <div class="item_buttons">
-                              <span>
+                              <span class="waves-effect waves-light btn category_button">
                                 ${item.category}
                               </span>
-                              <span>
-                                 ${item.rank}
+                              <span class="waves-effect waves-light btn rank_button">
+                                 ${priority[rank]}
                               </span>
                               <span class="waves-effect waves-light btn completed_boolean">
-                                ${item.completed}
+                                ${status[complete]}
                               </span>
                               <a class="waves-effect waves-light btn delete">Delete</a>
                             </div>
@@ -143,8 +151,8 @@ $(() => {
               if (title && image && description && subcategory) {
 
                 $("<div style='display: none;'>").addClass("result")
-                .text(`${title} --- ${subcategory} --- ${description.substring(0,100)}...`)
-                .data("element", {"category": subcategory, "link": link, "title": title, "image": image,"description": description})
+                .text(`${title} --- ${category} --- ${description.substring(0,100)}...`)
+                .data("element", {"category": category, "link": link, "title": title, "image": image,"description": description, "subcategory": subcategory})
                 .appendTo($(".search_results"));
                 $('div.result').slideDown('slow');
               }
@@ -210,8 +218,6 @@ $(() => {
       subcategory = path.breadcrumb[0].title;
 
     }
-
-
 
     return {title: title, image: image, description, description, subcategory};
   }
@@ -286,11 +292,6 @@ $(() => {
 
 
 
-$('.list_class').on('click', '.completed_boolean', function () {
-  $(this).closest(".item_article").prop('id')
-});
-
-
 
 
 
@@ -340,10 +341,121 @@ $('.search_results').on('click', '.result', function (e) {
       method: 'POST',
       url: '/list/delete',
       data: item_id
-    }).then(() => {
+    }).then(()=>{
       $(this).closest("article").remove();
     });
   });
+
+
+
+  $('.list_class').on('click', '.completed_boolean', function () {
+
+    let item_id = {'item_id': $(this).closest(".item_article").prop('id')};
+
+    $.ajax({
+      method: 'POST',
+      url: '/list/status',
+      data: item_id
+    }).then(()=>{
+      // console.log($(this).text());
+      if ($(this).text().trim() === "Done") {
+
+        $(this).text('To-Do');
+
+      } else {
+
+        $(this).text('Done');
+
+      }
+
+    });
+
+  });
+
+
+
+  $('.list_class').on('click', '.rank_button', function () {
+
+    let item_id = {'item_id': $(this).closest(".item_article").prop('id')};
+
+    $.ajax({
+      method: 'POST',
+      url: '/list/rank',
+      data: item_id
+    }).then(()=>{
+      // console.log($(this).text());
+      if ($(this).text().trim() === 'High') {
+
+        $(this).text('Low');
+
+      } else if ($(this).text().trim() === 'Medium') {
+
+        $(this).text('High');
+
+      } else if ($(this).text().trim() === 'Low') {
+
+        $(this).text('Medium');
+
+      }
+
+    });
+
+  });
+
+
+
+
+  $('.list_class').on('click', '.category_button', function () {
+
+    let item_id = {'item_id': $(this).closest(".item_article").prop('id')};
+
+    $.ajax({
+      method: 'POST',
+      url: '/list/category',
+      data: item_id
+    }).then(()=>{
+
+      // console.log($(this).text());
+
+      if ($(this).text().trim() === 'Place/Restaurant') {
+
+        $(this).text('Product/Book');
+
+      } else if ($(this).text().trim() === 'Product/Book') {
+
+        $(this).text('Movie/TVSeries');
+
+      } else if ($(this).text().trim() === 'Movie/TVSeries') {
+
+        $(this).text('Place/Restaurant');
+
+      }
+
+    });
+
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // logout (doesn't work yet)
@@ -354,6 +466,9 @@ $('.search_results').on('click', '.result', function (e) {
         url: '/logout',
       });
     });
+
+
+
 
 
 });
