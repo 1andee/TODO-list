@@ -8,7 +8,7 @@ const express         = require("express");
 const bodyParser      = require("body-parser");
 const sass            = require("node-sass-middleware");
 const app             = express();
-const cookieSession  = require("cookie-session");
+const cookieSession   = require("cookie-session");
 
 const knexConfig  = require("./knexfile");
 const knex        = require("knex")(knexConfig[ENV]);
@@ -48,14 +48,56 @@ app.use("/api/users", usersRoutes(knex));
 // Home page
 app.get("/", (req, res) => {
   let user_id = req.session.user_id;
-  let templateVars = {
-    user_id
-  };
-  res.render("index", templateVars);
+
+  if (user_id) {
+    console.log(`USER ID IS ${user_id}`);
+    res.redirect("/list");
+  } else {
+    console.log(`NO USER ID`);
+    res.render('index');
+  }
+
 });
 
-//register
+// registration form
 app.post("/register", (req, res) => {
+
+  let flag = false;
+
+  // Conditional checks for email and password
+  if (!req.body.email || !req.body.password) {
+  let flag = true;
+  res.status(403).send('Please enter a valid email/password');
+  return;
+  }
+
+  knex.select().table('users')
+  .then((result)=> {
+    for (let user of result) {
+      if (req.body.email === user.email ) {
+        let flag = true;
+        res.status(403).send('Please enter a unique email');
+        return;
+      }
+    }
+  })
+
+  // Adds registration to database and sets cookie
+  if (flag === false) {
+    knex('users')
+    .returning('id')
+    .insert( { email: req.body.email, password: req.body.password } )
+    .then((user) => {
+      req.session.user_id = user[0];
+      console.log("USER ID IS", user[0]);
+      res.redirect("/list");
+    });
+  }
+
+});
+
+//login
+app.post("/login", (req, res) => {
 
   // Conditional checks for email and password
   if (!req.body.email || !req.body.password) {
@@ -63,50 +105,23 @@ app.post("/register", (req, res) => {
   return;
   }
 
-  knex.select().table('users')
-  .then((result)=> {
-    for (let user of result) {
-      if (req.body.email === user.email ) {
-        res.status(403).send('Please enter a unique email');
-        return;
-      }
-    }
-  })
-
-  // Send registration info to Users database
-  const user_id = knex('users')
-    .returning('id')
-    .insert( { email: req.body.email, password: req.body.password } )
-    .then(() => {
-      req.session.user_id = user_id,
-      res.redirect("/list")
-    });
-
-});
-
-//login
-app.post("/login", (req, res) => {
-
-  if (!req.body.email || !req.body.password) {
-  res.status(403).send('Please enter a valid email/password');
-  return;
-  }
-
+  // Checks login details against those in database
   knex.select().table('users')
   .then((result)=> {
     for (let user of result) {
 
       if (req.body.email === user.email ) {
         if (req.body.password === user.password) {
-
-        const user_id = knex('users')
-          .returning('id')
-          .where({ email: user.email })
-          .then(() => {
-            req.session.user_id = user_id,
-            res.redirect("/list")
-          });
-
+            let user_email = req.body.email;
+            // Generates cookie for user
+            knex('users')
+            .returning('id')
+            .where('email', user_email)
+            .then((user) => {
+              req.session.user_id = user[0].id;
+              console.log("USER ID IS", user[0].id);
+              res.redirect('/list');
+            });
         } else {
           res.status(401).send('Please enter a valid email/password');
           return;
@@ -114,18 +129,31 @@ app.post("/login", (req, res) => {
       }
     }
   })
+
 });
 
 // UPDATE USER PROFILE
 app.get("/profile", (req, res) => {
   let user_id = req.session.user_id;
-  let email = "sensei_doug@gmail.com"
 
-  let templateVars = {
-    user_id,
-    email
-  };
-  res.render('profile', templateVars);
+  if (!user_id) {
+    console.log("NO USER ID FOUND")
+    res.redirect("/");
+  } else {
+    knex('users')
+    .returning('user')
+    .where({ id: user_id })
+    .first()
+    .then((user) => {
+      const user_email = user.email;
+      console.log(`USER EMAIL IS ${user_email}`);
+      let templateVars = {
+        user_id,
+        user_email
+      };
+      res.render('profile', templateVars);
+    });
+  }
 });
 
 // UPDATE USER PROFILE
@@ -150,7 +178,7 @@ app.post("/profile", (req, res) => {
   /*
   Send updated info to Users database
   Update existing user (not insert as new)
-  knex('users').insert( { email: req.body.email, password: req.body.password } )
+  knex('users').update( { email: req.body.email, password: req.body.password } )
   .then(() => {
     res.redirect("/list");
   });
@@ -163,10 +191,26 @@ app.post("/profile", (req, res) => {
 //TO-DO list
 app.get("/list", (req, res) => {
   let user_id = req.session.user_id;
-  let templateVars = {
-    user_id
-  };
-  res.render('list', templateVars);
+
+  if (!user_id) {
+    console.log("NO USER ID FOUND");
+    res.redirect("/");
+  } else {
+    knex('users')
+    .returning('user')
+    .where({ id: user_id })
+    .first()
+    .then((user) => {
+      const user_email = user.email;
+      console.log(`USER EMAIL IS ${user_email}`);
+      let templateVars = {
+        user_id,
+        user_email
+      };
+      res.render('list', templateVars);
+    });
+  }
+
 });
 
 app.post("/list", (req, res) => {
@@ -315,8 +359,9 @@ app.post("/list/category", (req, res) => {
 
 // route for logout (needs debugging)
 app.post("/logout", (req, res) => {
+  console.log("LOGGING OUT USER");
   req.session = null;
-  res.redirect("/");
+  res.redirect('/');
 });
 
 // app.post("/list/completed_boolean", (req, res) => {
