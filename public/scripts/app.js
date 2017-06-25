@@ -432,19 +432,12 @@ $(() => {
       } else {
         $(this).text('Done');
 
-        // ajax post request to delete item
-        //remove item after 750 milliseconds
+        //remove item from display after 750 milliseconds
         setTimeout(() => {
-          $.ajax({
-            method: 'POST',
-            url: '/list/delete',
-            data: item_id
-          }).then(()=>{
-            $(this).closest("article").remove();
-          })
+          $(this).closest("article").remove();
         }, 750);
-      }
 
+      }
 
     });
 
