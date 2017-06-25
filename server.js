@@ -2,12 +2,13 @@
 
 require('dotenv').config();
 
-const PORT        = process.env.PORT || 8080;
-const ENV         = process.env.ENV || "development";
-const express     = require("express");
-const bodyParser  = require("body-parser");
-const sass        = require("node-sass-middleware");
-const app         = express();
+const PORT            = process.env.PORT || 8080;
+const ENV             = process.env.ENV || "development";
+const express         = require("express");
+const bodyParser      = require("body-parser");
+const sass            = require("node-sass-middleware");
+const app             = express();
+const cookieSession  = require("cookie-session");
 
 const knexConfig  = require("./knexfile");
 const knex        = require("knex")(knexConfig[ENV]);
@@ -35,12 +36,22 @@ app.use("/styles", sass({
 }));
 app.use(express.static("public"));
 
+app.use(cookieSession({
+  name: 'session',
+  keys: ["key 1"],
+  maxAge: 24 * 60 * 60 * 1000
+}));
+
 // Mount all resource routes
 app.use("/api/users", usersRoutes(knex));
 
 // Home page
 app.get("/", (req, res) => {
-  res.render("index");
+  let user_id = req.session.user_id;
+  let templateVars = {
+    user_id
+  };
+  res.render("index", templateVars);
 });
 
 //register
@@ -48,7 +59,7 @@ app.post("/register", (req, res) => {
 
   // Conditional checks for email and password
   if (!req.body.email || !req.body.password) {
-  res.status(403).send('Please fill out all fields');
+  res.status(403).send('Please enter a valid email/password');
   return;
   }
 
@@ -56,17 +67,20 @@ app.post("/register", (req, res) => {
   .then((result)=> {
     for (let user of result) {
       if (req.body.email === user.email ) {
-        res.status(403).send('Email already exists');
+        res.status(403).send('Please enter a unique email');
         return;
       }
     }
   })
 
   // Send registration info to Users database
-  knex('users').insert( { email: req.body.email, password: req.body.password } )
-  .then(() => {
-    res.redirect("/list");
-  });
+  const user_id = knex('users')
+    .returning('id')
+    .insert( { email: req.body.email, password: req.body.password } )
+    .then(() => {
+      req.session.user_id = user_id,
+      res.redirect("/list")
+    });
 
 });
 
@@ -74,7 +88,7 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
 
   if (!req.body.email || !req.body.password) {
-  res.status(403).send('Please fill out all fields');
+  res.status(403).send('Please enter a valid email/password');
   return;
   }
 
@@ -82,11 +96,19 @@ app.post("/login", (req, res) => {
   .then((result)=> {
     for (let user of result) {
 
-      if (req.body.email === user.egmail ) {
+      if (req.body.email === user.email ) {
         if (req.body.password === user.password) {
-          res.redirect('/list');
+
+        const user_id = knex('users')
+          .returning('id')
+          .where({ email: user.email })
+          .then(() => {
+            req.session.user_id = user_id,
+            res.redirect("/list")
+          });
+
         } else {
-          res.status(401).send("Password doesn't match");
+          res.status(401).send('Please enter a valid email/password');
           return;
         }
       }
@@ -94,15 +116,57 @@ app.post("/login", (req, res) => {
   })
 });
 
-//logout
-app.post("/logout", (req, res) => {
+// UPDATE USER PROFILE
+app.get("/profile", (req, res) => {
+  let user_id = req.session.user_id;
+  let email = "sensei_doug@gmail.com"
 
-  res.redirect("/");
+  let templateVars = {
+    user_id,
+    email
+  };
+  res.render('profile', templateVars);
 });
+
+// UPDATE USER PROFILE
+app.post("/profile", (req, res) => {
+
+  // Conditional checks for email and password
+  if (!req.body.email || !req.body.password) {
+  res.status(403).send('Please enter a valid email/password');
+  return;
+  }
+
+  knex.select().table('users')
+  .then((result)=> {
+    for (let user of result) {
+      if (req.body.email === user.email ) {
+        res.status(403).send('Please enter a unique email');
+        return;
+      }
+    }
+  })
+
+  /*
+  Send updated info to Users database
+  Update existing user (not insert as new)
+  knex('users').insert( { email: req.body.email, password: req.body.password } )
+  .then(() => {
+    res.redirect("/list");
+  });
+
+  */
+
+});
+
 
 //TO-DO list
 app.get("/list", (req, res) => {
-  res.render('list');
+  let user_id = req.session.user_id;
+  let templateVars = {
+    user_id
+  };
+  res.render('list', templateVars);
 });
 
 app.post("/list", (req, res) => {
