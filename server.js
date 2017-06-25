@@ -101,8 +101,8 @@ app.post("/login", (req, res) => {
 
   // Conditional checks for email and password
   if (!req.body.email || !req.body.password) {
-  res.status(403).send('Please enter a valid email/password');
-  return;
+    res.status(403).send('Please enter a valid email/password');
+    return;
   }
 
   // Checks login details against those in database
@@ -110,8 +110,8 @@ app.post("/login", (req, res) => {
   .then((result)=> {
     for (let user of result) {
 
-      if (req.body.email === user.email ) {
-        if (req.body.password === user.password) {
+      if (req.body.email === user.email && req.body.password === user.password) {
+
             let user_email = req.body.email;
             // Generates cookie for user
             knex('users')
@@ -122,10 +122,10 @@ app.post("/login", (req, res) => {
               console.log("USER ID IS", user[0].id);
               res.redirect('/list');
             });
-        } else {
-          res.status(401).send('Please enter a valid email/password');
-          return;
-        }
+
+       }  else {
+        res.status(401).send('Please enter a valid email/password');
+        return;
       }
     }
   })

@@ -158,7 +158,7 @@ $('#todo-list').on('click', 'h3', function () {
 
               if (title && image && description && subcategory) {
 
-                $("<div style='display: none;'>").addClass("result")
+                $("<div style='display: none;'>").addClass("result").addClass('hoverable')
                 .text(`${title} --- ${category} --- ${description}...`)
                 .data("element", {"category": category, "link": link, "title": title, "image": image,"description": description, "subcategory": subcategory})
                 .appendTo($(".search_results"));

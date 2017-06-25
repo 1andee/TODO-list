@@ -1,15 +1,23 @@
 @import url('https://fonts.googleapis.com/css?family=Frijole');
 
+$font-stack: 'Frijole', Helvetica, sans-serif;
+$headlines: #e53935;
+$text_or_background: #e0e0e0 ;
+$background: #f5f3e6;
+$accents: #fde403;
+
 body {
-  background-color: #EEE;
+  background-color: #eeeee;
+
 
   h1, h4 {
     margin: 0;
-    font-family: 'Frijole', cursive;
+    font-family: $font-stack;
   }
 
   h1 {
-    color: #244751;
+    //color: #244751;
+    color: $headlines;
   }
 
   h4 {
@@ -48,7 +56,7 @@ body {
   margin-top: 20px;
 }
 article {
-  background-color: white;
+  background-color: $text_or_background;
   padding: 20px;
 
   .item-info-container {
@@ -68,6 +76,20 @@ article {
   }
 
 }
+
+
+div .result {
+  margin-bottom: 10px;
+}
+
+
+div .result {
+  border-bottom: 2px solid #26a69a;
+  border-top: 2px solid #26a69a;
+  /* background-color: #26a69a; */
+  background-color: white;
+}
+
 
 
 @media only screen and (min-width: 993px) {
