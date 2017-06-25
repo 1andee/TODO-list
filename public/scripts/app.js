@@ -64,14 +64,14 @@ $(() => {
 
                         <div class="item-info-container">
 
-                          <div class="col s4">
+                          <div class="col s2">
                             <img class="item_thumbnail"src="${item.thumbnail}"/>
                           </div>
 
-                          <div class="col s8">
+                          <div class="col s10">
 
                             <div class="item_description">
-                              Description: ${item.description}
+                              <h5>Description:</h5> ${item.description}
                             </div>
 
                             <div class="item_buttons">
