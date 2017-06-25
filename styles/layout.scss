@@ -53,6 +53,25 @@ article {
   background-color: #e0e0e0;
   padding: 20px;
 
+  #item-title {
+    margin-bottom: 16px;
+  }
+
+  #item-title span {
+    display: block;
+  }
+
+  #item-title div {
+    display: inline;
+    float: right;
+    margin-top: 7px;
+    margin-right: 21px;
+  }
+
+  #item-title h3 {
+    display: inline;
+  }
+
   .item-info-container {
     display: none;
     margin-top: 20px;

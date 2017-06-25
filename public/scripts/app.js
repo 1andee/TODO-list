@@ -113,14 +113,17 @@ $(() => {
 
     let item_entry = `
       <article class="row item_article hoverable" id="${item.id} ">
-        <h3 class="col s12">${item.item_name}
-          <i class="material-icons">info</i>
-          <br />
-          Date Created: ${day}
-          <br />
-          Time Created: ${time}
-        </h3>
-        
+        <div id="item-title" class="col s12">
+          <h3>${item.item_name}
+            <i class="material-icons">info</i>
+          </h3>
+          <div>
+            <span>Date Added: ${day}</span>
+            <span>Time Added: ${time}</span>
+          </div>
+        </div>
+
+
         <div class="item_buttons">
           <span class="waves-effect waves-light btn category_button">
             ${item.category}
@@ -160,7 +163,7 @@ $(() => {
 
   }
 
-  $('#todo-list').on('click', 'h3', function () {
+  $('#todo-list').on('click', '#item-title', function () {
     $(this).siblings(".item-info-container").slideToggle('slow');
   });
 
