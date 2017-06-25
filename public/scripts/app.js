@@ -111,49 +111,49 @@ $(() => {
     let time = date.toLocaleTimeString();
 
 
-    let item_entry = `<article class="row item_article hoverable" id="${item.id} ">
-                            <h3 class="col s12">${item.item_name}
-                            <i class="material-icons">info</i>
-                            <br />
-                            Date Created: ${day}
-                            <br />
-                            Time Created: ${time}
-                            </h3>
+    let item_entry = `
+      <article class="row item_article hoverable" id="${item.id} ">
+        <h3 class="col s12">${item.item_name}
+          <i class="material-icons">info</i>
+          <br />
+          Date Created: ${day}
+          <br />
+          Time Created: ${time}
+        </h3>
+        
+        <div class="item_buttons">
+          <span class="waves-effect waves-light btn category_button">
+            ${item.category}
+          </span>
+          <span class="waves-effect waves-light btn rank_button">
+            ${priority[rank]}
+          </span>
+          <span class="waves-effect waves-light btn completed_boolean">
+            ${status[complete]}
+          </span>
+          <a class="waves-effect waves-light btn delete">Delete</a>
+        </div>
 
-                            <div class="item-info-container">
+        <div class="item-info-container">
 
-                            <div class="col s2">
-                            <img class="item_thumbnail"src="${item.thumbnail}"/>
-                            </div>
+          <div class="col s2">
+            <img class="item_thumbnail"src="${item.thumbnail}"/>
+          </div>
 
-                            <div class="col s10">
+          <div class="col s10">
 
+            <div class="item_description">
+                <h5>Description:</h5>
+                ${item.description}</br>
+                <a href="${item.url}">
+                  <h5>Link</h5>
+                </a>
+            </div>
 
-                            <div class="item_description">
-                              <h5>Description:</h5>
-                              ${item.description}</br>
-                              <a href="${item.url}"><h5>Link</h5></a>
-                            </div>
+           </div>
 
-
-
-
-
-                            <div class="item_buttons">
-                              <span class="waves-effect waves-light btn category_button">
-                                ${item.category}
-                              </span>
-                              <span class="waves-effect waves-light btn rank_button">
-                                 ${priority[rank]}
-                              </span>
-                              <span class="waves-effect waves-light btn completed_boolean">
-                                ${status[complete]}
-                              </span>
-                                <a class="waves-effect waves-light btn delete">Delete</a>
-                             </div>
-                           </div>
-                          </div>
-                    </article>`
+         </div>
+      </article>`
 
 
     return item_entry;
@@ -501,18 +501,13 @@ $(() => {
 
 
   $('#filterRank #0').add('#filterRank #1').add('#filterRank #2').add('#filterRank #3').on('click', function () {
-
     filterRankVariable = $(this).text();
-
   //change Priority button text to value of chosen filter
   $("a[data-activates='filterRank']").text($(this).text());
 
   if ( $("a[data-activates='filterRank']").text() === 'All' ) {
      $("a[data-activates='filterRank']").text('priority');
   }
-
-
-
     loadList();
 
   });
