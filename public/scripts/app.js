@@ -500,12 +500,18 @@ $(() => {
   });
 
 
-
   $('#filterRank #0').add('#filterRank #1').add('#filterRank #2').add('#filterRank #3').on('click', function () {
 
     filterRankVariable = $(this).text();
 
-    // console.log(filterRankVariable);
+  //change Priority button text to value of chosen filter
+  $("a[data-activates='filterRank']").text($(this).text());
+
+  if ( $("a[data-activates='filterRank']").text() === 'All' ) {
+     $("a[data-activates='filterRank']").text('priority');
+  }
+
+
 
     loadList();
 
@@ -517,7 +523,13 @@ $(() => {
 
     filterCategoryVariable = $(this).text();
 
-    // console.log(filterCategoryVariable);
+    //change Category button text to value of chosen filter
+    $("a[data-activates='filterCategory']").text($(this).text());
+
+    if ( $("a[data-activates='filterCategory']").text() === 'All' ) {
+       $("a[data-activates='filterCategory']").text('category');
+    }
+
 
     loadList();
 
@@ -529,7 +541,13 @@ $(() => {
 
     filterCompletedVariable = $(this).text();
 
-    // console.log(filterCompletedVariable);
+    //change Category button text to value of chosen filter
+    $("a[data-activates='filterCompleted']").text($(this).text());
+
+    if ( $("a[data-activates='filterCompleted']").text() === 'All' ) {
+       $("a[data-activates='filterCompleted']").text('status');
+    }
+
 
     loadList();
 
@@ -541,7 +559,9 @@ $(() => {
 
     sortDate = $(this).text();
 
-    // console.log(filterCompletedVariable);
+    //change Date Created button text to value of chosen filter
+    $("a[data-activates='sortDate']").text($(this).text());
+
 
     loadList();
 
