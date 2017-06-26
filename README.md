@@ -1,5 +1,5 @@
 
-### Kick List
+# Kick List
 Kick List helps keep track of places to visit and things to buy, read or watch. Kick List makes this process easy by auto-catogarizing your list - just search and let Kick List do all the work for you. Your list can be re-catogarized and a link is displayed for more information.     
 
 ## Kick List
