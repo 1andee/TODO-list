@@ -1,15 +1,30 @@
 $(() => {
 
-
+  //Initial Values
+  const GOOGLEKEY = 'AIzaSyAvGMLqGQHYngTP2y_MtIPXRs2VEm5FnB0';
+  const GOOGLECSE = '002945784373727008043:4ivjf5lejok';
   var filterRankVariable = 'All';
   var filterCategoryVariable = 'All';
   var filterCompletedVariable = 'All';
-
   var sortDate = 'Descending';
 
 
+  //Comparison Tables
+  const categories = {
 
-  // render items name at /list
+    'www.yelp.com': 'Place/Restaurant',
+    'www.amazon.com': 'Product/Book',
+    'www.imdb.com': 'Movie/TVSeries'
+
+  };
+
+  const priority = {'1': 'High', '2': 'Medium', '3': 'Low'};
+  const status = {'true': 'Done', 'false': 'To-Do'};
+
+  //Load initial list of TO-DO items
+  loadList();
+
+  //Loads list of TO-DO items
   function loadList() {
     $.ajax({
       method: "GET",
@@ -35,34 +50,22 @@ $(() => {
 
       });
 
-      console.log( "Current Filters are Rank:" + filterRankVariable + " Category:" + filterCategoryVariable + " Completion:" + filterCompletedVariable + " Sort By:" + sortDate);
-
     });
 
   }
 
-  loadList();
 
-
-
+  //Sorts items in ascending/descending order
   function sortBy(items, order) {
 
     if (order === 'Descending') {
-
       items.sort(function(a,b){
-
         return new Date(b.created_at) - new Date(a.created_at);
-
       })
-
     } else if (order === 'Ascending'){
-
       items.sort(function(a,b){
-
         return new Date(a.created_at) - new Date(b.created_at);
-
       })
-
     }
 
     return items;
@@ -70,15 +73,10 @@ $(() => {
   }
 
 
-
+  //Filters items by rank/category/completion status
   function filterBy(element, rank ,category, completed) {
 
-    let priority = {'1': 'High', '2': 'Medium', '3': 'Low'};
-
     let element_rank = priority[element.rank];
-
-    let status = {'true': 'Done', 'false': 'To-Do'};
-
     let element_completed = status[element.completed];
 
     if ( (element_rank === rank) || (rank === 'All') ) {
@@ -90,24 +88,18 @@ $(() => {
     }
 
     return null;
+
   }
 
 
+  //Create individual list item
   function createListElement(item) {
 
-
     let rank = item.rank;
-
-    let priority = {'1': 'High', '2': 'Medium', '3': 'Low'};
-
     let complete = item.completed;
 
-    let status = {'true': 'Done', 'false': 'To-Do'}
-
     let date = (new Date(item.created_at));
-
     let day = date.toDateString();
-
     let time = date.toLocaleTimeString();
 
 
@@ -158,48 +150,31 @@ $(() => {
          </div>
       </article>`
 
-
     return item_entry;
 
   }
 
+
+  //Slide/Toggle for list items
   $('#todo-list').on('click', '#item-title', function () {
     $(this).siblings(".item-info-container").slideToggle('slow');
   });
 
-
-
-  const categories = {
-
-    'www.yelp.com': 'Place/Restaurant',
-    'www.amazon.com': 'Product/Book',
-    'www.imdb.com': 'Movie/TVSeries'
-
-  };
-
-
-  //to do: get search bar to replace the parameter search in the url
+  //Search Bar to display auto-categorized results
   $( "#search_bar .input-field" ).keypress(function (e) {
     if(e.which == 13) {
 
       e.preventDefault();
 
-
-
       $('.search_results').empty();
       $.ajax({
-
-        url: `https://www.googleapis.com/customsearch/v1?key=AIzaSyAvGMLqGQHYngTP2y_MtIPXRs2VEm5FnB0&cx=002945784373727008043:4ivjf5lejok&q=${encodeURI($(this).val())}&gl=ca`,
+        url: `https://www.googleapis.com/customsearch/v1?key=${ GOOGLEKEY }&cx=${ GOOGLECSE }&q=${encodeURI($(this).val())}&gl=ca`,
         method: 'GET',
       }).done((response) => {
-        
+
         for (let item of response.items) {
 
           if (item.displayLink in categories) {
-
-            // let title = item.title;
-            // console.log(item.displayLink);
-            // console.log(categories['www.imdb.com']);
 
 
             let category = categories[item.displayLink.toString()];
@@ -212,171 +187,145 @@ $(() => {
             let description = info.description;
             let subcategory = info.subcategory;
 
-            //console.log(info);
+            if (title && image) {
 
-            if (title && image && description && subcategory) {
-
-
-              description = description.substring(0,100).concat("...");
+              if (!description) {
+                 description = 'Description not found...';
+              } else {
+                description = description.substring(0,100).concat("...");
+              }
 
               $("<div style='display: none;'>").addClass("result").addClass('hoverable')
-
-              .text(`${title} --- ${category} --- ${description}...`)
-              .data("element", {"category": category, "link": link, "title": title, "image": image,"description": description, "subcategory": subcategory})
+              .text(`${title} --- ${category} --- ${description}`)
+              .data("element", {"category": category,
+                "link": link,
+                "title": title,
+                "image": image,
+                "description": description,
+                "subcategory": subcategory})
               .appendTo($(".search_results"));
               $('div.result').slideDown('slow');
+
             }
           }
         }
 
       });
     }
-
   })
 
 
-
+  //Goes through Google CSE results
   function cleanInfo(item, category) {
 
-    // console.log(item);
-    // console.log(category);
+    let obj = {title: null, image: null, description: null, 'category':category, subcategory:null}
 
     if (category === 'Place/Restaurant') {
-
-      // return title = item.pagemap.localbusiness[0].name;
-
-      return searchYelp(item);
-
+      return searchYelp(item, obj);
     } else if (category === 'Product/Book') {
-
-      return searchAmazon(item);
-
+      return searchAmazon(item, obj);
     } else if (category === 'Movie/TVSeries') {
-
-      return searchIMDB(item);
-
+      return searchIMDB(item, obj);
     }
 
   }
 
 
-
-  function searchYelp(item){
+  //Searches Yelp Results
+  function searchYelp(item, obj){
 
     let path = item.pagemap;
-    let title = null;
-    let image = null;
-    let description = null;
-    let subcategory = null;
 
     if ('localbusiness' in path) {
-      title = item.pagemap.localbusiness[0].name;
+      obj.title = item.pagemap.localbusiness[0].name;
     }
 
     if ('cse_thumbnail' in path) {
-      image = item.pagemap.cse_thumbnail[0].src;
+      obj.image = item.pagemap.cse_thumbnail[0].src;
     }
 
     if ('review' in path) {
       if (path.review.length >= 2) {
-        description = item.pagemap.review[1].description;
+        obj.description = item.pagemap.review[1].description;
       }
     }
 
     if ('breadcrumb' in path) {
-
-      subcategory = path.breadcrumb[0].title;
-
+      obj.subcategory = path.breadcrumb[0].title;
     }
 
-    return {title: title, image: image, description, description, subcategory};
+    return obj;
+
   }
 
 
-
-  function searchAmazon(item){
+  //Searches Amazon Results
+  function searchAmazon(item, obj){
 
     let path = item.pagemap;
-    let title = null;
-    let image = null;
-    let description = null;
-    let subcategory = null;
 
     if ('metatags' in path) {
-      title = item.pagemap.metatags[0]["og:title"];
-      description = item.pagemap.metatags[0]["og:description"];
+      obj.title = item.pagemap.metatags[0]["og:title"];
+      obj.description = item.pagemap.metatags[0]["og:description"];
 
       let string = item.pagemap.metatags[0].title;
 
       if (string) {
 
         if (string.substring(string.length-5) === 'Books') {
-          subcategory = 'Books'
+          obj.subcategory = 'Books'
         } else {
-          subcategory = 'Product'
+          obj.subcategory = 'Product'
         }
 
       }
     }
 
     if ('cse_thumbnail' in path) {
-      image = item.pagemap.cse_thumbnail[0].src;
+      obj.image = item.pagemap.cse_thumbnail[0].src;
     }
 
     if ('review' in path) {
-      description = item.pagemap.review[1].description;
+      obj.description = item.pagemap.review[1].description;
     }
 
-    return {title: title, image: image, description, description, subcategory};
+    return obj;
+
   }
 
 
-
-  function searchIMDB(item){
+  //Searches IMDB results
+  function searchIMDB(item, obj){
 
     let path = item.pagemap;
-    let title = null;
-    let image = null;
-    let description = null;
-    let subcategory = null;
 
     if ('movie' in path) {
-      title = item.pagemap.movie[0].name;
-      description = item.pagemap.movie[0].description;
-      subcategory = 'Movie';
+      obj.title = item.pagemap.movie[0].name;
+      obj.description = item.snippet;
+      obj.subcategory = 'Movie';
     }
 
     if ('tvseries' in path) {
-      title = item.pagemap.tvseries[0].name;
-      description = item.pagemap.tvseries[0].description;
-      subcategory = 'TVSeries';
+      obj.title = item.pagemap.tvseries[0].name;
+      obj.description = item.pagemap.tvseries[0].description;
+      obj.subcategory = 'TVSeries';
     }
 
     if ('cse_thumbnail' in path) {
-      image = item.pagemap.cse_thumbnail[0].src;
+      obj.image = item.pagemap.cse_thumbnail[0].src;
     }
 
-    return {title: title, image: image, description, description, subcategory};
+
+
+    return obj;
 
   }
 
 
+  //Action for new selection
+  $('.search_results').on('click', '.result', function () {
 
-
-
-
-
-
-
-
-
-
-
-
-
-  $('.search_results').on('click', '.result', function (e) {
     let item = $(this).data("element");
-
 
     $('.search_results').empty();
     $.ajax({
@@ -397,12 +346,11 @@ $(() => {
   });
 
 
-  // DELETE ITEM FROM ITEMS TABLE WHEN DELETE BUTTON IS CLICKED
+  //Action for item Delete button
   $('.list_class').on('click', '.delete', function () {
 
     let item_id = {'item_id': $(this).closest(".item_article").prop('id')};
 
-    // ajax post request to delete item
     $.ajax({
       method: 'POST',
       url: '/list/delete',
@@ -413,7 +361,7 @@ $(() => {
   });
 
 
-
+  //Action for item Status button
   $('.list_class').on('click', '.completed_boolean', function () {
 
     let item_id = {'item_id': $(this).closest(".item_article").prop('id')};
@@ -423,7 +371,7 @@ $(() => {
       url: '/list/status',
       data: item_id
     }).then(()=>{
-      // console.log($(this).text());
+
       if ($(this).text().trim() === "Done") {
 
         $(this).text('To-Do');
@@ -443,7 +391,7 @@ $(() => {
   });
 
 
-
+  //Action for item Priority button
   $('.list_class').on('click', '.rank_button', function () {
 
     let item_id = {'item_id': $(this).closest(".item_article").prop('id')};
@@ -453,19 +401,13 @@ $(() => {
       url: '/list/rank',
       data: item_id
     }).then(()=>{
-      // console.log($(this).text());
+
       if ($(this).text().trim() === 'High') {
-
         $(this).text('Low');
-
       } else if ($(this).text().trim() === 'Medium') {
-
         $(this).text('High');
-
       } else if ($(this).text().trim() === 'Low') {
-
         $(this).text('Medium');
-
       }
 
     });
@@ -473,8 +415,7 @@ $(() => {
   });
 
 
-
-
+  //Action for item Category button
   $('.list_class').on('click', '.category_button', function () {
 
     let item_id = {'item_id': $(this).closest(".item_article").prop('id')};
@@ -485,20 +426,12 @@ $(() => {
       data: item_id
     }).then(()=>{
 
-      // console.log($(this).text());
-
       if ($(this).text().trim() === 'Place/Restaurant') {
-
         $(this).text('Product/Book');
-
       } else if ($(this).text().trim() === 'Product/Book') {
-
         $(this).text('Movie/TVSeries');
-
       } else if ($(this).text().trim() === 'Movie/TVSeries') {
-
         $(this).text('Place/Restaurant');
-
       }
 
     });
@@ -506,79 +439,73 @@ $(() => {
   });
 
 
+  //Action for filter rank button
   $('#filterRank #0').add('#filterRank #1').add('#filterRank #2').add('#filterRank #3').on('click', function () {
+
     filterRankVariable = $(this).text();
-  //change Priority button text to value of chosen filter
+
   $("a[data-activates='filterRank']").text($(this).text());
 
   if ( $("a[data-activates='filterRank']").text() === 'All' ) {
      $("a[data-activates='filterRank']").text('priority');
   }
+
     loadList();
 
   });
 
 
-
+  //Action for filter category button
   $('#filterCategory #0').add('#filterCategory #1').add('#filterCategory #2').add('#filterCategory #3').on('click', function () {
 
     filterCategoryVariable = $(this).text();
 
-    //change Category button text to value of chosen filter
     $("a[data-activates='filterCategory']").text($(this).text());
 
     if ( $("a[data-activates='filterCategory']").text() === 'All' ) {
        $("a[data-activates='filterCategory']").text('category');
     }
 
-
     loadList();
 
   });
 
 
-
+  //Action for filter status button
   $('#filterCompleted #0').add('#filterCompleted #1').add('#filterCompleted #2').on('click', function () {
 
     filterCompletedVariable = $(this).text();
 
-    //change Category button text to value of chosen filter
     $("a[data-activates='filterCompleted']").text($(this).text());
 
     if ( $("a[data-activates='filterCompleted']").text() === 'All' ) {
        $("a[data-activates='filterCompleted']").text('status');
     }
 
-
     loadList();
 
   });
 
 
-
+  //Action for sort button
   $('#sortDate #0').add('#sortDate #1').on('click', function () {
 
     sortDate = $(this).text();
 
-    //change Date Created button text to value of chosen filter
     $("a[data-activates='sortDate']").text($(this).text());
-
 
     loadList();
 
   });
 
 
-
-
+  //Action for reset button
   $('#resetButton').on('click', function () {
 
     filterRankVariable = 'All';
     filterCategoryVariable = 'All';
     filterCompletedVariable = 'All';
     sortDate = 'Descending';
-
-    // console.log('reset list')
 
     loadList();
 

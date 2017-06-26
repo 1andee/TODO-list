@@ -208,6 +208,7 @@ app.post("/profile", (req, res) => {
 
 //TO-DO list
 app.get("/list", (req, res) => {
+
   let user_id = req.session.user_id;
 
   if (!user_id) {
