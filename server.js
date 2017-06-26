@@ -116,7 +116,6 @@ app.post("/login", (req, res) => {
           .where('email', user_email)
           .then((user) => {
             req.session.user_id = user[0].id;
-            console.log("USER ID IS", user[0].id);
             res.redirect('/list');
           });
         };
@@ -129,21 +128,20 @@ app.post("/login", (req, res) => {
   });
 });
 
-// UPDATE USER PROFILE
+// User Profile - View current
 app.get("/profile", (req, res) => {
   let user_id = req.session.user_id;
 
   if (!user_id) {
-    console.log("NO USER ID FOUND")
     res.redirect("/");
   } else {
+    // pass current user_id and email to page
     knex('users')
     .returning('user')
     .where({ id: user_id })
     .first()
     .then((user) => {
       const user_email = user.email;
-      console.log(`USER EMAIL IS ${user_email}`);
       let templateVars = {
         user_id,
         user_email
@@ -153,34 +151,54 @@ app.get("/profile", (req, res) => {
   };
 });
 
-// UPDATE USER PROFILE
-app.post("/profile", (req, res) => {
+// #### User Profile - Update details #### \\\\
 
-  // Conditional checks for email and password
-  if (!req.body.email || !req.body.password) {
-    res.status(403).send('Please enter a valid email/password');
-    return;
+// Helper function for revising email
+function emailUpdater(user_id, newEmail) {
+  return knex('users')
+  .returning('user')
+  .where({ id: user_id })
+  .first()
+  .then((user) => {
+      return knex('users')
+      .where({ id: user_id })
+      .update({ email: newEmail })
+  });
+};
+
+// Helper function for revising password
+function passwordUpdater(user_id, newPassword) {
+  return knex('users')
+  .returning('user')
+  .where({ id: user_id })
+  .first()
+  .then((user) => {
+      return knex('users')
+      .where({ id: user_id })
+      .update({ password: newPassword })
+  });
+};
+
+// Handles post requests for Profile Updates
+app.post("/profile", (req, res) => {
+  let user_id = req.session.user_id;
+  let newEmail = req.body.email;
+  let newPassword = req.body.password;
+
+  let emailPromise = Promise.resolve();
+  let passwordPromise = Promise.resolve();
+  if (newEmail) {
+    emailPromise = emailUpdater(user_id, newEmail);
   }
 
-  knex.select().table('users')
-  .then((result)=> {
-    for (let user of result) {
-      if (req.body.email === user.email ) {
-        res.status(403).send('Please enter a unique email');
-        return;
-      }
-    }
-  })
+  if (newPassword) {
+    passwordPromise = passwordUpdater(user_id, newPassword)
+  }
 
-  /*
-  Send updated info to Users database
-  Update existing user (not insert as new)
-  knex('users').update( { email: req.body.email, password: req.body.password } )
+  Promise.all([emailPromise, passwordPromise])
   .then(() => {
-  res.redirect("/list");
-});
-
-*/
+    res.redirect('/profile');
+  });
 
 });
 

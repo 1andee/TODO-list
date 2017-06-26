@@ -2,11 +2,11 @@
 
     <!-- update user profile -->
     <center><h4>update your deets</h4></center>
-    <form method="POST" action="/update" class='col m12 center-align'>
+    <form method="POST" action="/profile" class='col m12 center-align'>
 
       <div class="row">
         <div class="input-field col s12">
-          <input class="validate" type="text" name="email" placeholder="<%= user_email %>">
+          <input class="validate" type="text" name="email" value="<%= user_email %>">
           <label for="email">Email</label>
         </div>
       </div>
