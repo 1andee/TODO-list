@@ -1,7 +1,7 @@
 $(() => {
 
   //Initial Values
-  const GOOGLEKEY = 'AIzaSyAAaoVTaGOgOxxQngPT-Uf39AXYjIFbqCs';
+  const GOOGLEKEY = 'AIzaSyAvGMLqGQHYngTP2y_MtIPXRs2VEm5FnB0';
   const GOOGLECSE = '002945784373727008043:4ivjf5lejok';
   var filterRankVariable = 'All';
   var filterCategoryVariable = 'All';
@@ -21,7 +21,6 @@ $(() => {
   const priority = {'1': 'High', '2': 'Medium', '3': 'Low'};
   const status = {'true': 'Done', 'false': 'To-Do'};
 
-
   //Load initial list of TO-DO items
   loadList();
 
@@ -39,16 +38,17 @@ $(() => {
 
       items.forEach( function(element) {
 
+        console.log(element.created_at);
+
         if (filterBy(element, filterRankVariable, filterCategoryVariable, filterCompletedVariable)) {
 
           let item = createListElement(element);
+
           $('#todo-list').append(item);
 
         }
 
       });
-
-      //console.log( "Current Filters are Rank:" + filterRankVariable + " Category:" + filterCategoryVariable + " Completion:" + filterCompletedVariable + " Sort By:" + sortDate);
 
     });
 
@@ -102,46 +102,53 @@ $(() => {
     let day = date.toDateString();
     let time = date.toLocaleTimeString();
 
-    let item_entry = `<article class="row item_article hoverable" id="${item.id} ">
-                        <h3 class="col s12">${item.item_name}
-                          <i class="material-icons">info</i>
-                          <br />
-                          Date Created: ${day}
-                          <br />
-                          Time Created: ${time}
-                        </h3>
 
-                        <div class="item-info-container">
+    let item_entry = `
+      <article class="row item_article hoverable" id="${item.id} ">
+        <div id="item-title" class="col s12">
+          <h3>${item.item_name}
+            <i class="material-icons">info</i>
+          </h3>
+          <div>
+            <span>Date Added: ${day}</span>
+            <span>Time Added: ${time}</span>
+          </div>
+        </div>
 
-                          <div class="col s2">
-                          <img class="item_thumbnail"src="${item.thumbnail}"/>
-                          </div>
 
-                          <div class="col s10">
+        <div class="item_buttons">
+          <span class="waves-effect waves-light btn category_button">
+            ${item.category}
+          </span>
+          <span class="waves-effect waves-light btn rank_button">
+            ${priority[rank]}
+          </span>
+          <span class="waves-effect waves-light btn completed_boolean">
+            ${status[complete]}
+          </span>
+          <a class="waves-effect waves-light btn delete">Delete</a>
+        </div>
 
-                            <div class="item_description">
-                              <h5>Description:</h5>
-                              ${item.description}</br>
-                              <a href="${item.url}"><h5>Link</h5></a>
-                            </div>
+        <div class="item-info-container">
 
-                            <div class="item_buttons">
-                              <span class="waves-effect waves-light btn category_button">
-                                ${item.category}
-                              </span>
-                              <span class="waves-effect waves-light btn rank_button">
-                                 ${priority[rank]}
-                              </span>
-                              <span class="waves-effect waves-light btn completed_boolean">
-                                ${status[complete]}
-                              </span>
-                                <a class="waves-effect waves-light btn delete">Delete</a>
-                             </div>
-                            </div>
+          <div class="col s2">
+            <img class="item_thumbnail"src="${item.thumbnail}"/>
+          </div>
 
-                          </div>
+          <div class="col s10">
 
-                    </article>`
+            <div class="item_description">
+                <h5>Description:</h5>
+                ${item.description}</br>
+                <a href="${item.url}">
+                  <h5>Link</h5>
+                </a>
+            </div>
+
+           </div>
+
+         </div>
+      </article>`
 
     return item_entry;
 
@@ -149,14 +156,12 @@ $(() => {
 
 
   //Slide/Toggle for list items
-  $('#todo-list').on('click', 'h3', function () {
+  $('#todo-list').on('click', '#item-title', function () {
     $(this).siblings(".item-info-container").slideToggle('slow');
   });
 
-
   //Search Bar to display auto-categorized results
   $( "#search_bar .input-field" ).keypress(function (e) {
-
     if(e.which == 13) {
 
       e.preventDefault();
@@ -170,6 +175,7 @@ $(() => {
         for (let item of response.items) {
 
           if (item.displayLink in categories) {
+
 
             let category = categories[item.displayLink.toString()];
             let link = item.link;
@@ -201,15 +207,12 @@ $(() => {
               $('div.result').slideDown('slow');
 
             }
-
           }
-
         }
 
       });
     }
-
-  });
+  })
 
 
   //Goes through Google CSE results

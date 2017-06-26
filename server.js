@@ -219,8 +219,7 @@ app.get("/list", (req, res) => {
     .where({ id: user_id })
     .first()
     .then((user) => {
-      //PLACEHOLDER ASD. Don't know what error is happening. -Kevin
-      const user_email = 'asd';
+      const user_email = user.email;
       let templateVars = {
         user_id,
         user_email
