@@ -9,6 +9,7 @@ const bodyParser      = require("body-parser");
 const sass            = require("node-sass-middleware");
 const app             = express();
 const cookieSession   = require("cookie-session");
+const bcrypt          = require("bcrypt");
 
 const knexConfig  = require("./knexfile");
 const knex        = require("knex")(knexConfig[ENV]);
@@ -59,9 +60,10 @@ app.get("/", (req, res) => {
 // registration form
 app.post("/register", (req, res) => {
   let invalidFormSubmit = false;
+  let { email, password } = req.body;
 
   // Checks if email and password fields are empty
-  if (!req.body.email || !req.body.password) {
+  if (!email || !password) {
     let invalidFormSubmit = true;
     res.status(401).send('Please enter a valid email/password');
     return;
@@ -71,7 +73,7 @@ app.post("/register", (req, res) => {
   knex.select().table('users')
   .then((result)=> {
     for (let user of result) {
-      if (req.body.email === user.email) {
+      if (email === user.email) {
         let invalidFormSubmit = true;
         res.status(403).send('Please enter a unique email');
         return;
@@ -82,7 +84,7 @@ app.post("/register", (req, res) => {
       // Adds new user to database and sets cookie
       knex('users')
       .returning('id')
-      .insert( { email: req.body.email, password: req.body.password } )
+      .insert( { email: email, password: bcrypt.hashSync(password, 10) } )
       .then((user) => {
         req.session.user_id = user[0];
         res.redirect("/list");
@@ -94,9 +96,10 @@ app.post("/register", (req, res) => {
 //login
 app.post("/login", (req, res) => {
   let loginCredentials = false;
+  let { email, password } = req.body;
 
   // Checks if email and password fields are empty
-  if (!req.body.email || !req.body.password) {
+  if (!email || !password) {
     loginCredentials = false;
     res.status(401).send('Please enter a valid email/password');
     return;
@@ -106,11 +109,11 @@ app.post("/login", (req, res) => {
   knex.select().table('users')
   .then((result)=> {
     for (let user of result) {
-      if (req.body.email === user.email) {
-        if (req.body.password === user.password) {
+      if (email === user.email) {
+        if (bcrypt.compareSync(password, user.password)) {
           // Login successful, add cookie and redirect
           loginCredentials = true;
-          let user_email = req.body.email;
+          let user_email = email;
           knex('users')
           .returning('id')
           .where('email', user_email)
@@ -175,7 +178,7 @@ function passwordUpdater(user_id, newPassword) {
   .then((user) => {
       return knex('users')
       .where({ id: user_id })
-      .update({ password: newPassword })
+      .update({ password: bcrypt.hashSync(newPassword, 10) })
   });
 };
 
