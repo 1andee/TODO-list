@@ -208,6 +208,7 @@ app.post("/profile", (req, res) => {
 
 //TO-DO list
 app.get("/list", (req, res) => {
+
   let user_id = req.session.user_id;
 
   if (!user_id) {
@@ -218,7 +219,8 @@ app.get("/list", (req, res) => {
     .where({ id: user_id })
     .first()
     .then((user) => {
-      const user_email = user.email;
+      //PLACEHOLDER ASD. Don't know what error is happening. -Kevin
+      const user_email = 'asd';
       let templateVars = {
         user_id,
         user_email
