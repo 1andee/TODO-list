@@ -4,6 +4,15 @@ $font-stack: 'Frijole', Helvetica, sans-serif;
 body {
   background-color: #eeeee;
 
+  .welcome {
+    width: 100%;
+    padding: 10px 20px;
+  }
+
+  #logout,
+  #profile {
+    float: right;
+  }
 
   h1, h4 {
     margin: 0;
