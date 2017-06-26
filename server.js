@@ -84,7 +84,7 @@ app.post("/register", (req, res) => {
       // Adds new user to database and sets cookie
       knex('users')
       .returning('id')
-      .insert( { email: email, password: password } )
+      .insert( { email: email, password: bcrypt.hashSync(password, 10) } )
       .then((user) => {
         req.session.user_id = user[0];
         res.redirect("/list");
@@ -110,7 +110,7 @@ app.post("/login", (req, res) => {
   .then((result)=> {
     for (let user of result) {
       if (email === user.email) {
-        if (password === user.password) {
+        if (bcrypt.compareSync(password, user.password)) {
           // Login successful, add cookie and redirect
           loginCredentials = true;
           let user_email = email;
@@ -178,7 +178,7 @@ function passwordUpdater(user_id, newPassword) {
   .then((user) => {
       return knex('users')
       .where({ id: user_id })
-      .update({ password: newPassword })
+      .update({ password: bcrypt.hashSync(newPassword, 10) })
   });
 };
 
