@@ -1,4 +1,6 @@
-# Node Skeleton
+### Kick List
+
+
 
 ## Project Setup
 
@@ -27,3 +29,12 @@
 
 - Node 5.10.x or above
 - NPM 3.8.x or above
+- bcrypt ^1.0.2
+- body-parser ^1.15.2
+- cookie-session ^2.0.0-beta.2
+- dotenv ^2.0.0
+- ejs ^2.4.1
+- express ^4.13.4
+- knex 0.11.7
+- knex-logger ^0.1.0
+- morgan ^1.7.0
