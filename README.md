@@ -27,3 +27,9 @@ Kick List helps keep track of places to visit and things to buy, read or watch. 
 - knex 0.11.7
 - knex-logger ^0.1.0
 - morgan ^1.7.0
+
+## Contributors
+
+[![Kevin Lim](https://avatars1.githubusercontent.com/u/16856051?v=3&s=400)](https://github.com/limkevi1) | [![Katia Al-Amir](https://avatars0.githubusercontent.com/u/11549223?v=3&s=400)](https://github.com/kamir222) | [![Ian Duke](https://avatars2.githubusercontent.com/u/16829276?v=3&s=400)](https://github.com/1andee)
+---|---|---
+[Kevin Lim](https://github.com/limkevi1) | [Katia Al-Amir](https://github.com/kamir222) | [Ian Duke](https://github.com/1andee)
