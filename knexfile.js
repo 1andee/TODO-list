@@ -1,6 +1,6 @@
 if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 var pg = require('pg');
-pg.defaults.ssl = true;
+pg.defaults.ssl = false;
 
 module.exports = {
 
@@ -31,6 +31,7 @@ module.exports = {
       max: 10
     },
     migrations: {
+      directory: './db/migrations',
       tableName: 'migrations'
     }
   }

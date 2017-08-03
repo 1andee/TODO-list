@@ -9,7 +9,7 @@ const bodyParser      = require("body-parser");
 const sass            = require("node-sass-middleware");
 const app             = express();
 const cookieSession   = require("cookie-session");
-const bcrypt          = require("bcrypt");
+const bcrypt          = require("bcrypt-nodejs");
 
 const knexConfig  = require("./knexfile");
 const knex        = require("knex")(knexConfig[ENV]);
