@@ -1,8 +1,6 @@
 $(() => {
 
   //Initial Values
-  const GOOGLEKEY = process.env.GOOGLEKEY;
-  const GOOGLECSE = process.env.GOOGLECSE;
   var filterRankVariable = 'All';
   var filterCategoryVariable = 'All';
   var filterCompletedVariable = 'All';
