@@ -16,9 +16,6 @@ const knex        = require("knex")(knexConfig[ENV]);
 const morgan      = require('morgan');
 const knexLogger  = require('knex-logger');
 
-const GOOGLEKEY   = process.env.GOOGLEKEY;
-const GOOGLECSE   = process.env.GOOGLECSE;
-
 // Seperated Routes for each Resource
 const usersRoutes = require("./routes/users");
 
@@ -225,9 +222,7 @@ app.get("/list", (req, res) => {
       const user_email = user.email;
       let templateVars = {
         user_id,
-        user_email,
-        GOOGLEKEY,
-        GOOGLECSE
+        user_email
       };
       res.render('list', templateVars);
     });
