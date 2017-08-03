@@ -232,7 +232,12 @@ app.get("/list", (req, res) => {
 
 app.post("/list", (req, res) => {
 
-  let { title, category, description, thumbnail, url, subcategory } = req.body;
+  let title = req.body.title;
+  let category = req.body.category;
+  let description = req.body.description;
+  let thumbnail = req.body.image;
+  let url = req.body.link;
+  let subcategory = req.body.subcategory;
 
   //insert clicked item into items database
   knex('items').insert({
