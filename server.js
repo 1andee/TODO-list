@@ -84,7 +84,7 @@ app.post("/register", (req, res) => {
       // Adds new user to database and sets cookie
       knex('users')
       .returning('id')
-      .insert( { email: email, password: bcrypt.hashSync(password, 10) } )
+      .insert( { email: email, password: bcrypt.hashSync(password, bcrypt.genSaltSync()) } )
       .then((user) => {
         req.session.user_id = user[0];
         res.redirect("/list");
@@ -163,9 +163,9 @@ function emailUpdater(user_id, newEmail) {
   .where({ id: user_id })
   .first()
   .then((user) => {
-      return knex('users')
-      .where({ id: user_id })
-      .update({ email: newEmail })
+    return knex('users')
+    .where({ id: user_id })
+    .update({ email: newEmail })
   });
 };
 
@@ -176,9 +176,9 @@ function passwordUpdater(user_id, newPassword) {
   .where({ id: user_id })
   .first()
   .then((user) => {
-      return knex('users')
-      .where({ id: user_id })
-      .update({ password: bcrypt.hashSync(newPassword, 10) })
+    return knex('users')
+    .where({ id: user_id })
+    .update({ password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) })
   });
 };
 
@@ -232,12 +232,7 @@ app.get("/list", (req, res) => {
 
 app.post("/list", (req, res) => {
 
-  let title = req.body.title;
-  let category = req.body.category;
-  let description = req.body.description;
-  let thumbnail = req.body.image;
-  let url = req.body.link;
-  let subcategory = req.body.subcategory;
+  let { title, category, description, image, link, subcategory } = req.body;
 
   //insert clicked item into items database
   knex('items').insert({
@@ -247,8 +242,8 @@ app.post("/list", (req, res) => {
     rank: '2',
     category: category,
     description: description,
-    thumbnail: thumbnail,
-    url: url,
+    thumbnail: image,
+    url: link,
     subcategory: subcategory
 
   }).then(() => {
@@ -315,7 +310,6 @@ app.post("/list/rank", (req, res) => {
   });
 });
 
-
 app.post("/list/category", (req, res) => {
   let item_id = req.body.item_id;
 
@@ -342,16 +336,11 @@ app.post("/list/category", (req, res) => {
   });
 });
 
-
 // Logout
 app.get("/logout", (req, res) => {
   req.session = null;
   res.redirect('/');
 });
-
-// app.post("/list/completed_boolean", (req, res) => {
-//   let completed_boolean = req.body.
-// });
 
 app.listen(PORT, () => {
   console.log("Kick List app listening on port " + PORT);
