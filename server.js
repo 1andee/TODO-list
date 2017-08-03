@@ -236,7 +236,7 @@ app.post("/list", (req, res) => {
 
   //insert clicked item into items database
   knex('items').insert({
-    user_id = req.session.user_id,
+    user_id: req.session.user_id,
     item_name: title,
     completed: 'false',
     rank: '2',
