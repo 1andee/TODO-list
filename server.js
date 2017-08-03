@@ -231,15 +231,12 @@ app.get("/list", (req, res) => {
 
 
 app.post("/list", (req, res) => {
-  let title = req.body.title;
-  let category = req.body.category;
-  let description = req.body.description;
-  let thumbnail = req.body.image;
-  let url = req.body.link;
-  let subcategory = req.body.subcategory;
 
-  knex('items').insert({ //insert clicked item into items database
-    user_id: '1', //change this for cookieSession
+  let { title, category, description, thumbnail, url, subcategory } = req.body;
+
+  //insert clicked item into items database
+  knex('items').insert({
+    user_id = req.session.user_id,
     item_name: title,
     completed: 'false',
     rank: '2',
