@@ -23,3 +23,11 @@
       <h1>KICK LIST</h1>
       <h4>save it for later</h4>
     </header>
+
+    <% if (messages) { %>
+      <% for (key in messages) { %>
+        <div class="alert-<%= [key] %>">
+          <span><%= messages[key] %></span>
+        </div>
+      <% } %>
+    <% } %>

@@ -16,6 +16,8 @@ const knex        = require("knex")(knexConfig[ENV]);
 const morgan      = require('morgan');
 const knexLogger  = require('knex-logger');
 
+const flash = require('express-flash');
+
 // Seperated Routes for each Resource
 const usersRoutes = require("./routes/users");
 
@@ -29,6 +31,7 @@ app.use(knexLogger(knex));
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(flash());
 app.use("/styles", sass({
   src: __dirname + "/styles",
   dest: __dirname + "/public/styles",
@@ -65,8 +68,8 @@ app.post("/register", (req, res) => {
   // Checks if email and password fields are empty
   if (!email || !password) {
     let invalidFormSubmit = true;
-    res.status(401).send('Please enter a valid email/password');
-    return;
+    req.flash('danger', "Please enter a valid email/password.");
+    return res.redirect('/');
   };
 
   // Checks if email already exists in database
@@ -75,8 +78,8 @@ app.post("/register", (req, res) => {
     for (let user of result) {
       if (email === user.email) {
         let invalidFormSubmit = true;
-        res.status(403).send('Please enter a unique email');
-        return;
+        req.flash('danger', "Please enter a unique email.");
+        return res.redirect('/');
       };
     };
 
@@ -87,7 +90,8 @@ app.post("/register", (req, res) => {
       .insert( { email: email, password: bcrypt.hashSync(password, bcrypt.genSaltSync()) } )
       .then((user) => {
         req.session.user_id = user[0];
-        res.redirect("/list");
+        req.flash('success', "Your account has been created.")
+        return res.redirect("/list");
       });
     };
   });
@@ -101,8 +105,8 @@ app.post("/login", (req, res) => {
   // Checks if email and password fields are empty
   if (!email || !password) {
     loginCredentials = false;
-    res.status(401).send('Please enter a valid email/password');
-    return;
+    req.flash('danger', "Please enter a valid email/password.");
+    return res.redirect('/');
   };
 
   // Verify login details in database
@@ -125,8 +129,8 @@ app.post("/login", (req, res) => {
       };
     };
     if (!loginCredentials) {
-      res.status(403).send('Please enter a valid email/password');
-      return;
+      req.flash('danger', "Please enter a valid email/password.");
+      return res.redirect('/');
     };
   });
 });
@@ -136,7 +140,8 @@ app.get("/profile", (req, res) => {
   let user_id = req.session.user_id;
 
   if (!user_id) {
-    res.redirect("/");
+    req.flash('warning', "Only logged in users can access that.");
+    res.redirect('/');
   } else {
     // pass current user_id and email to page
     knex('users')
@@ -200,7 +205,8 @@ app.post("/profile", (req, res) => {
 
   Promise.all([emailPromise, passwordPromise])
   .then(() => {
-    res.redirect('/profile');
+    req.flash('success', "Your details have been updated.")
+    return res.redirect("/profile");
   });
 
 });
@@ -212,6 +218,7 @@ app.get("/list", (req, res) => {
   let user_id = req.session.user_id;
 
   if (!user_id) {
+    req.flash('warning', "Only logged in users can access that.");
     res.redirect("/");
   } else {
     knex('users')
@@ -341,7 +348,7 @@ app.post("/list/category", (req, res) => {
 // Logout
 app.get("/logout", (req, res) => {
   req.session = null;
-  res.redirect('/');
+  return res.redirect('/');
 });
 
 app.listen(PORT, () => {

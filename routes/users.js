@@ -21,6 +21,7 @@ module.exports = (knex) => {
         res.json(results);
       });
     } else {
+      req.flash('warning', "Only logged in users can access that.");
       res.redirect('/');
     }
   });
