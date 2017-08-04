@@ -163,9 +163,9 @@ function emailUpdater(user_id, newEmail) {
   .where({ id: user_id })
   .first()
   .then((user) => {
-    return knex('users')
-    .where({ id: user_id })
-    .update({ email: newEmail })
+      return knex('users')
+      .where({ id: user_id })
+      .update({ email: newEmail })
   });
 };
 
@@ -176,9 +176,9 @@ function passwordUpdater(user_id, newPassword) {
   .where({ id: user_id })
   .first()
   .then((user) => {
-    return knex('users')
-    .where({ id: user_id })
-    .update({ password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) })
+      return knex('users')
+      .where({ id: user_id })
+      .update({ password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) })
   });
 };
 
@@ -313,6 +313,7 @@ app.post("/list/rank", (req, res) => {
 app.post("/list/category", (req, res) => {
   let item_id = req.body.item_id;
 
+
   knex.select('category')
   .from('items')
   .where('id', item_id)
@@ -335,6 +336,7 @@ app.post("/list/category", (req, res) => {
     });
   });
 });
+
 
 // Logout
 app.get("/logout", (req, res) => {

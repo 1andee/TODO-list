@@ -13,8 +13,6 @@ module.exports = (knex) => {
     let user_id = req.session.user_id;
 
     if (user_id) {
-      console.log(req.session);
-      console.log(req.session.user_id);
       knex('items')
       .select("*")
       .from("items")
@@ -30,6 +28,3 @@ module.exports = (knex) => {
   return router;
 
 }
-
-
-// .where('user_id', req.session.user_id)
