@@ -17,6 +17,9 @@ http://kick-list.herokuapp.com
 3. Start the web server using the `npm run local` command. The app will be served at http://localhost:8080
 4. Go to http://localhost:8080 in your browser.
 
+## Known Issues
+- The app is limited to 100 search queries/day due to Google Custom Search Engine API restrictions.
+
 ## Dependencies
 
 - Node 5.10.x or above
