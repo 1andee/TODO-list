@@ -310,9 +310,9 @@ app.post("/list/rank", (req, res) => {
   });
 });
 
+
 app.post("/list/category", (req, res) => {
   let item_id = req.body.item_id;
-
 
   knex.select('category')
   .from('items')
