@@ -23,7 +23,7 @@ const GOOGLEKEY   = process.env.GOOGLEKEY;
 const GOOGLECSE   = process.env.GOOGLECSE;
 
 // Seperated Routes for each Resource
-const usersRoutes = require("./routes/users");
+const listRoutes = require("./routes/list");
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
 // 'dev' = Concise output colored by response status for development use.
@@ -51,7 +51,7 @@ app.use(cookieSession({
 }));
 
 // Mount all resource routes
-app.use("/api/users", usersRoutes(knex));
+app.use("/api", listRoutes(knex));
 
 // Home page
 app.get("/", (req, res) => {
