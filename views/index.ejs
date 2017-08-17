@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <title>Home Page</title>
-  
+
 <%- include('partials/_header_loggedout') %>
 
     <!-- login / register form -->
-    <form method="POST" action="/login" class='col m12 center-align'>
+    <form method="POST" class='col m12 center-align'>
 
       <div class="row">
         <div class="input-field col s12">
@@ -20,8 +20,8 @@
           <label for="password">Password</label>
         </div>
       </div>
-      <input class="btn waves-effect waves-light" type="submit" value="login">
-      <input class="btn waves-effect waves-light" type="submit" value="register" formaction="/register">
+      <button class="btn waves-effect waves-light" type="submit" formaction="/login">login</button>
+      <button class="btn waves-effect waves-light" type="submit" formaction="/register">register</button>
 
 
     </form>
