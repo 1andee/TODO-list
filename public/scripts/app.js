@@ -164,10 +164,15 @@ $(() => {
 
       e.preventDefault();
 
+      let data = {};
+      data.title = 'input-field';
+      data.query = $(this).val();
+
       $('.search_results').empty();
       $.ajax({
-        url: `https://www.googleapis.com/customsearch/v1?key=${ GOOGLEKEY }&cx=${ GOOGLECSE }&q=${encodeURI($(this).val())}&gl=ca`,
-        method: 'GET',
+        method: 'POST',
+        url: '/search',
+        data: data
       }).done((response) => {
 
         for (let item of response.items) {

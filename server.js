@@ -239,6 +239,16 @@ app.get("/list", (req, res) => {
   };
 });
 
+app.post("/search", (req, res) => {
+  console.log(req.body.query);
+  // make get request to Google
+  // receive Google CSE results as JSON
+  // pass JSON response back to client
+}).done((response) => {
+
+
+});
+
 
 app.post("/list", (req, res) => {
 
