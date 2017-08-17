@@ -18,6 +18,9 @@ const knexLogger  = require('knex-logger');
 
 const flash = require('express-flash');
 
+const GOOGLEKEY   = process.env.GOOGLEKEY;
+const GOOGLECSE   = process.env.GOOGLECSE;
+
 // Seperated Routes for each Resource
 const usersRoutes = require("./routes/users");
 

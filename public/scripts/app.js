@@ -1,8 +1,6 @@
 $(() => {
 
   //Initial Values
-  const GOOGLEKEY = 'AIzaSyAvGMLqGQHYngTP2y_MtIPXRs2VEm5FnB0';
-  const GOOGLECSE = '002945784373727008043:4ivjf5lejok';
   var filterRankVariable = 'All';
   var filterCategoryVariable = 'All';
   var filterCompletedVariable = 'All';
