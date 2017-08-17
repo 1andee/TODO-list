@@ -82,6 +82,12 @@ module.exports = (knex) => {
     });
   });
 
+  // Logout
+  userRoutes.post("/logout", (req, res) => {
+    req.session = null;
+    return res.redirect('/');
+  });
+
   return userRoutes;
 
 }

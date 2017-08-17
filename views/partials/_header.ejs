@@ -13,7 +13,9 @@
 <body>
   <div class="welcome">
     Welcome back, <%= user_email %>
-  <a id="logout" class="waves-effect btn-flat"  href="/logout">Logout</a>
+  <form method="POST">
+  <button id="logout" class="waves-effect btn-flat" type="submit" formaction="/users/logout">Logout</button>
+  </form>
   <a id="profile" class="waves-effect btn-flat" href="/profile">My Profile</a>
   </div>
   <!-- materlialize container -->

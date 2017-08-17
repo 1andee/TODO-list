@@ -270,13 +270,6 @@ app.post("/list/category", (req, res) => {
   });
 });
 
-
-// Logout
-app.get("/logout", (req, res) => {
-  req.session = null;
-  return res.redirect('/');
-});
-
 app.listen(PORT, () => {
   console.log("Kick List app listening on port " + PORT);
 });
