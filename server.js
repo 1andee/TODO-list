@@ -10,6 +10,7 @@ const sass            = require("node-sass-middleware");
 const app             = express();
 const cookieSession   = require("cookie-session");
 const bcrypt          = require("bcrypt-nodejs");
+const request         = require('request');
 
 const knexConfig  = require("./knexfile");
 const knex        = require("knex")(knexConfig[ENV]);
@@ -240,15 +241,23 @@ app.get("/list", (req, res) => {
 });
 
 app.post("/search", (req, res) => {
-  console.log(req.body.query);
-  // make get request to Google
-  // receive Google CSE results as JSON
-  // pass JSON response back to client
-}).done((response) => {
+  let query = req.body.query;
+  let url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLEKEY}&cx=${GOOGLECSE}&q=${query}&gl=ca`;
 
+  let options = {
+    'url': url,
+    'method': 'GET',
+  };
 
+  request(options, ((error, response, body) => {
+    if (error) {
+      console.log(error);
+    };
+    var results = JSON.parse(body);
+    res.send(results);
+  }));
+  
 });
-
 
 app.post("/list", (req, res) => {
 
