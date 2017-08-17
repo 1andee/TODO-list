@@ -1,10 +1,10 @@
 $(() => {
 
   //Initial Values
-  var filterRankVariable = 'All';
-  var filterCategoryVariable = 'All';
-  var filterCompletedVariable = 'All';
-  var sortDate = 'Descending';
+  let filterRankVariable = 'All';
+  let filterCategoryVariable = 'All';
+  let filterCompletedVariable = 'All';
+  let sortDate = 'Descending';
 
 
   //Comparison Tables

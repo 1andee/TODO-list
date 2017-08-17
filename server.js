@@ -253,10 +253,10 @@ app.post("/search", (req, res) => {
     if (error) {
       console.log(error);
     };
-    var results = JSON.parse(body);
+    let results = JSON.parse(body);
     res.send(results);
   }));
-  
+
 });
 
 app.post("/list", (req, res) => {
