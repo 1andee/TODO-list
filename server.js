@@ -22,6 +22,9 @@ const flash = require('express-flash');
 const GOOGLEKEY   = process.env.GOOGLEKEY;
 const GOOGLECSE   = process.env.GOOGLECSE;
 
+const passwordUpdater = require("./lib/passwordUpdater");
+const emailUpdater = require("./lib/emailUpdater");
+
 // Seperated Routes for each Resource
 const usersRoutes = require("./routes/users");
 
@@ -165,32 +168,6 @@ app.get("/profile", (req, res) => {
 
 // #### User Profile - Update details #### \\\\
 
-// Helper function for revising email
-function emailUpdater(user_id, newEmail) {
-  return knex('users')
-  .returning('user')
-  .where({ id: user_id })
-  .first()
-  .then((user) => {
-      return knex('users')
-      .where({ id: user_id })
-      .update({ email: newEmail })
-  });
-};
-
-// Helper function for revising password
-function passwordUpdater(user_id, newPassword) {
-  return knex('users')
-  .returning('user')
-  .where({ id: user_id })
-  .first()
-  .then((user) => {
-      return knex('users')
-      .where({ id: user_id })
-      .update({ password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) })
-  });
-};
-
 // Handles post requests for Profile Updates
 app.post("/profile", (req, res) => {
   let user_id = req.session.user_id;
@@ -200,11 +177,11 @@ app.post("/profile", (req, res) => {
   let emailPromise = Promise.resolve();
   let passwordPromise = Promise.resolve();
   if (newEmail) {
-    emailPromise = emailUpdater(user_id, newEmail);
+    emailPromise = emailUpdater(user_id, newEmail, knex);
   }
 
   if (newPassword) {
-    passwordPromise = passwordUpdater(user_id, newPassword)
+    passwordPromise = passwordUpdater(user_id, newPassword, knex)
   }
 
   Promise.all([emailPromise, passwordPromise])
