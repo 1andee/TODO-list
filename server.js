@@ -24,6 +24,7 @@ const GOOGLECSE   = process.env.GOOGLECSE;
 
 // Seperated Routes for each Resource
 const listRoutes = require("./routes/list");
+const userRoutes = require("./routes/users");
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
 // 'dev' = Concise output colored by response status for development use.
@@ -52,6 +53,7 @@ app.use(cookieSession({
 
 // Mount all resource routes
 app.use("/api", listRoutes(knex));
+app.use("/users", userRoutes(knex));
 
 // Home page
 app.get("/", (req, res) => {
@@ -62,81 +64,6 @@ app.get("/", (req, res) => {
   } else {
     res.render('index');
   };
-});
-
-// registration form
-app.post("/register", (req, res) => {
-  let invalidFormSubmit = false;
-  let { email, password } = req.body;
-
-  // Checks if email and password fields are empty
-  if (!email || !password) {
-    let invalidFormSubmit = true;
-    req.flash('danger', "Please enter a valid email/password.");
-    return res.redirect('/');
-  };
-
-  // Checks if email already exists in database
-  knex.select().table('users')
-  .then((result)=> {
-    for (let user of result) {
-      if (email === user.email) {
-        let invalidFormSubmit = true;
-        req.flash('danger', "Please enter a unique email.");
-        return res.redirect('/');
-      };
-    };
-
-    if (!invalidFormSubmit) {
-      // Adds new user to database and sets cookie
-      knex('users')
-      .returning('id')
-      .insert( { email: email, password: bcrypt.hashSync(password, bcrypt.genSaltSync()) } )
-      .then((user) => {
-        req.session.user_id = user[0];
-        req.flash('success', "Your account has been created.")
-        return res.redirect("/list");
-      });
-    };
-  });
-});
-
-//login
-app.post("/login", (req, res) => {
-  let loginCredentials = false;
-  let { email, password } = req.body;
-
-  // Checks if email and password fields are empty
-  if (!email || !password) {
-    loginCredentials = false;
-    req.flash('danger', "Please enter a valid email/password.");
-    return res.redirect('/');
-  };
-
-  // Verify login details in database
-  knex.select().table('users')
-  .then((result)=> {
-    for (let user of result) {
-      if (email === user.email) {
-        if (bcrypt.compareSync(password, user.password)) {
-          // Login successful, add cookie and redirect
-          loginCredentials = true;
-          let user_email = email;
-          knex('users')
-          .returning('id')
-          .where('email', user_email)
-          .then((user) => {
-            req.session.user_id = user[0].id;
-            res.redirect('/list');
-          });
-        };
-      };
-    };
-    if (!loginCredentials) {
-      req.flash('danger', "Please enter a valid email/password.");
-      return res.redirect('/');
-    };
-  });
 });
 
 // User Profile - View current
