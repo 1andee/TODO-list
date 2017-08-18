@@ -5,9 +5,12 @@ const userRoutes    = express.Router();
 const bodyParser    = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt        = require("bcrypt-nodejs");
+const emailUpdater = require("../lib/emailUpdater");
+const passwordUpdater = require("../lib/passwordUpdater");
 
 module.exports = (knex) => {
 
+  // New user registration
   userRoutes.post("/register", (req, res) => {
     let invalidFormSubmit = false;
     let { email, password } = req.body;
@@ -44,7 +47,7 @@ module.exports = (knex) => {
     });
   });
 
-  //login
+  // Login form
   userRoutes.post("/login", (req, res) => {
     let loginCredentials = false;
     let { email, password } = req.body;
@@ -80,6 +83,35 @@ module.exports = (knex) => {
         return res.redirect('/');
       };
     });
+  });
+
+  // Update profile
+  userRoutes.post("/profile", (req, res) => {
+    let user_id = req.session.user_id;
+    let newEmail = req.body.email;
+    let newPassword = req.body.password;
+    console.log(req.body.email);
+    console.log(req.body.password);
+    console.log(req.body);
+
+    let emailPromise = Promise.resolve();
+    let passwordPromise = Promise.resolve();
+    if (newEmail) {
+      console.log('inside the emailPromise');
+      emailPromise = emailUpdater(user_id, newEmail, knex);
+    }
+
+    if (newPassword) {
+      console.log('inside the passwordPromise');
+      passwordPromise = passwordUpdater(user_id, newPassword, knex);
+    }
+
+    Promise.all([emailPromise, passwordPromise])
+    .then(() => {
+      req.flash('success', "Your details have been updated.")
+      return res.redirect("/profile");
+    });
+
   });
 
   // Logout

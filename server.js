@@ -9,8 +9,6 @@ const bodyParser      = require("body-parser");
 const sass            = require("node-sass-middleware");
 const app             = express();
 const cookieSession   = require("cookie-session");
-const bcrypt          = require("bcrypt-nodejs");
-const request         = require('request');
 
 const knexConfig  = require("./knexfile");
 const knex        = require("knex")(knexConfig[ENV]);
@@ -19,13 +17,8 @@ const knexLogger  = require('knex-logger');
 
 const flash = require('express-flash');
 
-const GOOGLEKEY   = process.env.GOOGLEKEY;
-const GOOGLECSE   = process.env.GOOGLECSE;
-
-const passwordUpdater = require("./lib/passwordUpdater");
-const emailUpdater = require("./lib/emailUpdater");
-
 // Seperated Routes for each Resource
+const userList = require("./routes/api");
 const listRoutes = require("./routes/list");
 const userRoutes = require("./routes/users");
 
@@ -55,8 +48,10 @@ app.use(cookieSession({
 }));
 
 // Mount all resource routes
-app.use("/api", listRoutes(knex));
+app.use("/api", userList(knex));
+app.use("/list", listRoutes(knex));
 app.use("/users", userRoutes(knex));
+
 
 // Home page
 app.get("/", (req, res) => {
@@ -93,33 +88,6 @@ app.get("/profile", (req, res) => {
   };
 });
 
-// #### User Profile - Update details #### \\\\
-
-// Handles post requests for Profile Updates
-app.post("/profile", (req, res) => {
-  let user_id = req.session.user_id;
-  let newEmail = req.body.email;
-  let newPassword = req.body.password;
-
-  let emailPromise = Promise.resolve();
-  let passwordPromise = Promise.resolve();
-  if (newEmail) {
-    emailPromise = emailUpdater(user_id, newEmail, knex);
-  }
-
-  if (newPassword) {
-    passwordPromise = passwordUpdater(user_id, newPassword, knex)
-  }
-
-  Promise.all([emailPromise, passwordPromise])
-  .then(() => {
-    req.flash('success', "Your details have been updated.")
-    return res.redirect("/profile");
-  });
-
-});
-
-
 //TO-DO list
 app.get("/list", (req, res) => {
 
@@ -142,132 +110,6 @@ app.get("/list", (req, res) => {
       res.render('list', templateVars);
     });
   };
-});
-
-app.post("/search", (req, res) => {
-  let query = req.body.query;
-  let url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLEKEY}&cx=${GOOGLECSE}&q=${query}&gl=ca`;
-
-  let options = {
-    'url': url,
-    'method': 'GET',
-  };
-
-  request(options, ((error, response, body) => {
-    if (error) {
-      console.log(error);
-    };
-    let results = JSON.parse(body);
-    res.send(results);
-  }));
-
-});
-
-app.post("/list", (req, res) => {
-
-  let { title, category, description, image, link, subcategory } = req.body;
-
-  //insert clicked item into items database
-  knex('items').insert({
-    user_id: req.session.user_id,
-    item_name: title,
-    completed: 'false',
-    rank: '2',
-    category: category,
-    description: description,
-    thumbnail: image,
-    url: link,
-    subcategory: subcategory
-
-  }).then(() => {
-    res.redirect('/list');
-  });
-
-});
-
-
-// route for deleting items
-app.post("/list/delete", (req, res) => {
-  let item_id = req.body.item_id;
-
-  // knex command to remove selected item
-  knex('items')
-  .where('id', item_id)
-  .del()
-  .then(() => {
-    res.redirect('/list');
-  });
-});
-
-
-app.post("/list/status", (req, res) => {
-  let item_id = req.body.item_id;
-
-  knex.select('completed')
-  .from('items')
-  .where('id', item_id)
-  .then((query) => {
-    let bool = query[0].completed;
-    knex('items')
-    .where('id', item_id)
-    .update('completed', !bool)
-    .then(() => {
-      res.redirect('/list');
-    });
-  });
-});
-
-
-app.post("/list/rank", (req, res) => {
-  let item_id = req.body.item_id;
-
-  knex.select('rank')
-  .from('items')
-  .where('id', item_id)
-  .then((query) => {
-    let rank = query[0].rank;
-    if (rank === 1) {
-      rank = 3;
-    } else if (rank === 2) {
-      rank = 1;
-    } else if (rank === 3) {
-      rank = 2;
-    }
-
-    knex('items')
-    .where('id', item_id)
-    .update('rank', rank)
-    .then(() => {
-      res.redirect('/list');
-    });
-  });
-});
-
-
-app.post("/list/category", (req, res) => {
-  let item_id = req.body.item_id;
-
-  knex.select('category')
-  .from('items')
-  .where('id', item_id)
-  .then((query) => {
-
-    let category = query[0].category;
-    if (category === 'Place/Restaurant') {
-      category = 'Product/Book';
-    } else if (category === 'Product/Book') {
-      category = 'Movie/TVSeries';
-    } else if (category === 'Movie/TVSeries') {
-      category = 'Place/Restaurant';
-    }
-
-    knex('items')
-    .where('id', item_id)
-    .update('category', category)
-    .then(() => {
-      res.redirect('/list');
-    });
-  });
 });
 
 app.listen(PORT, () => {
