@@ -14,8 +14,9 @@ http://kick-list.herokuapp.com
 
 1. Fork this repository, then clone your fork of this repository.
 2. Install dependencies using the `npm install` command.
-3. Start the web server using the `npm run local` command. The app will be served at http://localhost:8080
-4. Go to http://localhost:8080 in your browser.
+3. Create .env file based on .env.example
+4. Start the web server using the `npm run` command. The app will be served at http://localhost:8080
+5. Go to http://localhost:8080 in your browser.
 
 ## Known Issues
 - The app is limited to 100 search queries/day due to Google Custom Search Engine API restrictions.

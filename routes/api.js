@@ -7,7 +7,7 @@ const cookieSession = require('cookie-session');
 
 module.exports = (knex) => {
 
-  // make items table availabe at /list
+  // make items table availabe at /api/list
   userList.get("/list", (req, res) => {
 
     let user_id = req.session.user_id;
