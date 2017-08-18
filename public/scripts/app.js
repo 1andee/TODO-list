@@ -171,7 +171,7 @@ $(() => {
       $('.search_results').empty();
       $.ajax({
         method: 'POST',
-        url: '/search',
+        url: '/list/search',
         data: data
       }).done((response) => {
 
@@ -333,7 +333,7 @@ $(() => {
     $('.search_results').empty();
     $.ajax({
       method: 'POST',
-      url: '/list',
+      url: '/list/new',
       data: item
     }).then(() => {
 
