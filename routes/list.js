@@ -3,12 +3,31 @@
 const express       = require('express');
 const listRoutes    = express.Router();
 const bodyParser    = require("body-parser");
+const cookieSession = require('cookie-session');
 const request         = require('request');
 
 const GOOGLEKEY   = process.env.GOOGLEKEY;
 const GOOGLECSE   = process.env.GOOGLECSE;
 
 module.exports = (knex) => {
+
+  listRoutes.get("/items", (req, res) => {
+
+    let user_id = req.session.user_id;
+
+    if (user_id) {
+      knex('items')
+      .select("*")
+      .from("items")
+      .where('user_id', req.session.user_id)
+      .then((results) => {
+        res.json(results);
+      });
+    } else {
+      req.flash('warning', "Only logged in users can access that.");
+      res.redirect('/');
+    }
+  });
 
   listRoutes.post("/search", (req, res) => {
     let query = req.body.query;

@@ -26,7 +26,7 @@ $(() => {
   function loadList() {
     $.ajax({
       method: "GET",
-      url: "/api/list",
+      url: "/list/items",
       dataType: "json"
     }).done((items) => {
 

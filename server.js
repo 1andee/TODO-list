@@ -18,7 +18,6 @@ const knexLogger  = require('knex-logger');
 const flash = require('express-flash');
 
 // Seperated Routes for each Resource
-const userList = require("./routes/api");
 const listRoutes = require("./routes/list");
 const userRoutes = require("./routes/users");
 
@@ -48,7 +47,6 @@ app.use(cookieSession({
 }));
 
 // Mount all resource routes
-app.use("/api", userList(knex));
 app.use("/list", listRoutes(knex));
 app.use("/users", userRoutes(knex));
 
